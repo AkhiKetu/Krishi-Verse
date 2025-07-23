@@ -1,0 +1,182 @@
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Noto Sans Bengali', sans-serif;
+  background-color: #f9f9f9;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* Containers */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* Top Bar */
+.top-bar {
+  background-color: #17761c;
+  color: #fff;
+  padding: 8px 0;
+}
+
+.top-bar-content {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+/* Header */
+.main-header {
+  background-color: #fff;
+  padding: 20px 0;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-title {
+  font-size: 28px;
+  color: #216b25;
+}
+
+.brand-tagline {
+  font-size: 14px;
+  color: #777;
+}
+
+.social-links a {
+  margin-left: 10px;
+}
+
+/* Navigation */
+.main-nav {
+  background-color: #e6f6e7;
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+}
+
+.nav-content {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 12px 0;
+}
+
+.nav-links a {
+  margin-right: 16px;
+  padding: 8px 12px;
+  text-decoration: none;
+  color: #0a0b0a;
+  font-weight: bold;
+}
+
+.nav-link.active {
+  background-color: #cde8cf;
+  border-radius: 4px;
+}
+
+/* Buttons */
+.btn {
+  padding: 8px 16px;
+  text-decoration: none;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.btn-outline {
+  border: 1px solid #17761c;
+  color: #4e9a52;
+  background-color: transparent;
+}
+
+.btn-outline:hover {
+  background-color: #94d298;
+}
+
+.btn-primary {
+  background-color: #42b048;
+  color: #fff;
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: #306233;
+}
+
+.btn-large {
+  padding: 12px 24px;
+  font-size: 16px;
+}
+
+/* Hero Section */
+.hero {
+  background: linear-gradient(rgba(23, 118, 28, 0.8), rgba(23, 118, 28, 0.4)), url('bg.jpg') center/cover no-repeat;
+  color: #fff;
+  padding: 80px 20px;
+  text-align: left;
+}
+
+.hero-title {
+  font-size: 36px;
+  margin-bottom: 16px;
+}
+
+.highlight {
+  color: #ffec00;
+}
+
+.hero-description {
+  font-size: 18px;
+  margin-bottom: 24px;
+}
+
+.hero-stats {
+  display: flex;
+  gap: 40px;
+  margin-top: 24px;
+}
+
+.stat-number {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.stat-label {
+  font-size: 14px;
+}
+
+/* Footer */
+.footer {
+  background-color: #1a1a1a;
+  color: #ccc;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.footer h3 {
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.footer p {
+  font-size: 14px;
+  margin: 4px 0;
+}
