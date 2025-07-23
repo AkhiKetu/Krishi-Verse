@@ -1,0 +1,86 @@
+<h2>Products</h2>
+<p>Manage your agricultural product inventory</p>
+
+<!-- Action Bar -->
+<div class="actions-bar">
+  <input id="searchInput" type="text" placeholder="Search products..." />
+  <select id="categoryFilter">
+    <option>Filter by category</option>
+    <option value="Vegetables">Vegetables</option>
+    <option value="Seeds">Seeds</option>
+  </select>
+  <button id="addProductBtn">+ Add New Product</button>
+</div>
+
+<!-- Product Table -->
+<div class="table-container">
+  <h3>Product Inventory</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Product ID</th>
+        <th>Name</th>
+        <th>Category</th>
+        <th>Price</th>
+        <th>Stock</th>
+        <th>Status</th>
+        <th>Supplier</th>
+        <th>Last Updated</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>P001</td>
+        <td>Organic Tomatoes</td>
+        <td>Vegetables</td>
+        <td>$3.50/kg</td>
+        <td>450</td>
+        <td><span class="status in-stock">In Stock</span></td>
+        <td>Green Farm Co.</td>
+        <td>2024-01-15</td>
+        <td>
+          <button class="edit-btn" onclick="editProduct(this)">Edit</button>
+          <button class="delete-btn" onclick="deleteProduct(this)">Delete</button>
+        </td>
+      </tr>
+      <tr>
+        <td>P002</td>
+        <td>Sunflower Seeds</td>
+        <td>Seeds</td>
+        <td>$1.20/kg</td>
+        <td>1200</td>
+        <td><span class="status stock-out">Stock Out</span></td>
+        <td>Seed Masters Ltd.</td>
+        <td>2024-01-20</td>
+        <td>
+          <button class="edit-btn" onclick="editProduct(this)">Edit</button>
+          <button class="delete-btn" onclick="deleteProduct(this)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Add/Edit Product Modal -->
+<div id="addProductModal" class="modal">
+  <div class="modal-content">
+    <span id="closeModal" class="close">&times;</span>
+    <h3>Add/Edit Product</h3>
+    <form id="addProductForm">
+      <input type="text" placeholder="Product ID" required />
+      <input type="text" placeholder="Name" required />
+      <input type="text" placeholder="Category" required />
+      <input type="text" placeholder="Price" required />
+      <input type="number" placeholder="Stock" required />
+      <input type="text" placeholder="Supplier" required />
+      <select required>
+        <option value="" disabled selected>Select Status</option>
+        <option value="in-stock">In Stock</option>
+        <option value="stock-out">Stock Out</option>
+      </select>
+      <input type="date" placeholder="Last Updated" required />
+      <button type="submit">Save Product</button>
+    </form>
+  </div>
+</div>
