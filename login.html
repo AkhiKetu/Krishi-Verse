@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login | Krishi-Verse</title>
+  <link rel="stylesheet" href="login.css" />
+</head>
+<body>
+
+  <div class="form-container">
+    <h2>Login to Krishi-Verse</h2>
+    <form onsubmit="login(event)">
+      <input type="text" id="username" placeholder="Username or Email" required />
+      <input type="password" id="password" placeholder="Password" required />
+
+      <!-- Designation Dropdown -->
+      <select id="designation" required>
+        <option value="" disabled selected>Select Designation</option>
+        <option value="admin">Admin</option>
+        <option value="supplier">Supplier</option>
+        <option value="transporter">Transporter</option>
+        <option value="distributor">Distributor</option>
+        <option value="retailer">Retailer</option>
+      </select>
+
+      <button type="submit">Login</button>
+      <p class="switch">Don't have an account? <a href="registration.html">Register here</a></p>
+    </form>
+  </div>
+
+  <div class="back-link">
+    <a href="index.html">← Back to Home</a>
+  </div>
+
+<script>
+  function login(event) {
+    event.preventDefault();
+
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+    const designation = document.getElementById("designation").value;
+
+    // Demo credentials
+    const demoCredentials = {
+      admin: { username: "admin", password: "1234", redirect: "dashboard.html" },
+      supplier: { username: "supplier", password: "1234", redirect: "supplierDashboard.html" },
+    };
+
+    const user = demoCredentials[designation];
+
+    if (user && username === user.username && password === user.password) {
+      localStorage.setItem("loggedIn", "true");
+      window.location.href = user.redirect;
+    } else {
+      alert("Invalid credentials or designation. Please try again.");
+    }
+  }
+</script>
+
+</body>
+</html>
