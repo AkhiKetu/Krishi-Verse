@@ -1,0 +1,60 @@
+<div class="crop-container">
+  <h1>Crops</h1>
+  <p>Manage your crop fields and monitor their progress</p>
+
+  <!-- Filter & Add Button Row -->
+  <div class="actions-bar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+    <select id="seasonFilter" style="padding: 8px; border: 1px solid #ccc; border-radius: 6px;">
+      <option value="All">All Seasons</option>
+      <option value="Summer">Summer</option>
+      <option value="Winter">Winter</option>
+      <option value="Monsoon">Monsoon</option>
+      <option value="Full Year">Full Year</option>
+    </select>
+    <button class="add-btn" id="addCropBtn">+ Add New Crop</button>
+  </div>
+
+  <!-- Crop Table -->
+  <table class="crop-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Quantity</th>
+        <th>Status</th>
+        <th>Harvest Date</th>
+        <th>Season</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="cropTableBody">
+      <!-- Sample crops -->
+      <tr data-season="Summer">
+        <td>Tomato</td>
+        <td>Vegetable</td>
+        <td>100</td>
+        <td>Growing</td>
+        <td>2025-08-10</td>
+        <td>Summer</td>
+        <td>
+          <button onclick="editCrop(this)">Edit</button>
+          <button onclick="deleteCrop(this)">Delete</button>
+        </td>
+      </tr>
+      <tr data-season="Winter">
+        <td>Carrot</td>
+        <td>Root</td>
+        <td>50</td>
+        <td>Harvested</td>
+        <td>2025-01-20</td>
+        <td>Winter</td>
+        <td>
+          <button class="edit-btn" onclick="editCrop(this)">Edit</button>
+          <button class="delete-btn" onclick="deleteCrop(this)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
