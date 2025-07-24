@@ -158,7 +158,7 @@
       const status = document.getElementById("cropStatus").value;
       const date = document.getElementById("cropDate").value;
       // For filtering, we'll add season info from filter or default 'All'
-      const season = seasonFilter.value || "All";
+      const season = document.getElementById("cropSeason").value || "All";
 
       const rowHTML = `
         <td>${name}</td>
@@ -171,6 +171,7 @@
           <button onclick="editCrop(this)">Edit</button>
           <button onclick="deleteCrop(this)">Delete</button>
         </td>
+      
       `;
 
       if (editingRow) {
@@ -212,6 +213,7 @@
     document.getElementById("cropQuantity").value = row.cells[2].textContent;
     document.getElementById("cropStatus").value = row.cells[3].textContent;
     document.getElementById("cropDate").value = row.cells[4].textContent;
+    document.getElementById("cropSeason").value = row.cells[5].textContent;
     // Set the season filter in modal (optional, if you add a season input in modal)
     cropModal.style.display = "flex";
   }

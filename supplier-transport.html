@@ -1,0 +1,60 @@
+<h2>Transport Management</h2>
+<p>Manage deliveries and transport requests</p>
+
+<div class="transport-controls">
+  <div class="filters">
+    <button class="filter-btn" data-status="all">All</button>
+    <button class="filter-btn" data-status="pending">Pending</button>
+    <button class="filter-btn" data-status="in-progress">In Progress</button>
+    <button class="filter-btn" data-status="completed">Completed</button>
+  </div>
+  <button class="new-request-btn">+ New Request</button>
+</div>
+
+<div class="transport-list">
+  <!-- This block can be repeated dynamically using backend -->
+  <div class="transport-item" data-id="TR001">
+    <div class="top-row">
+      <h3>TR001 - Delivery</h3>
+      <div class="tags">
+        <span class="status scheduled">Scheduled</span>
+        <span class="priority high">High</span>
+      </div>
+    </div>
+    <p class="item-desc">Fertilizer NPK 20-20-20 · 50 bags</p>
+    <ul class="details">
+      <li><strong>From:</strong> AgriSupply Store</li>
+      <li><strong>To:</strong> Wheat Field A</li>
+      <li><strong>Date:</strong> 2024-07-25 09:00 AM</li>
+      <li><strong>Vehicle:</strong> Truck - ABC123</li>
+      <li><strong>Driver:</strong> Ahmed Hassan</li>
+    </ul>
+    <div class="actions">
+      <button>Edit</button>
+      <button>View</button>
+    </div>
+  </div>
+
+  <div class="transport-item" data-id="TR002">
+    <div class="top-row">
+      <h3>TR002 - Pickup</h3>
+      <div class="tags">
+        <span class="status in-progress">In Progress</span>
+        <span class="priority critical">Critical</span>
+      </div>
+    </div>
+    <p class="item-desc">Harvested Wheat · 2.5 tons</p>
+    <ul class="details">
+      <li><strong>From:</strong> Wheat Field A</li>
+      <li><strong>To:</strong> Storage Facility</li>
+      <li><strong>Date:</strong> 2024-07-26 02:00 PM</li>
+      <li><strong>Vehicle:</strong> Truck - XYZ789</li>
+      <li><strong>Driver:</strong> Mohamed Ali</li>
+    </ul>
+    <div class="actions">
+      <button>Edit</button>
+      <button>View</button>
+    </div>
+  </div>
+</div>
+
