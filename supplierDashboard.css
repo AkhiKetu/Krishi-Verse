@@ -360,4 +360,22 @@ header {
   letter-spacing: 0.5px;
   text-align: center;
 }
+/* Action Buttons */
+.edit-btn {
+  padding: 4px 8px;
+  border: none;
+  background: #ffc107;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
 
+.delete-btn {
+  padding: 4px 8px;
+  border: none;
+  background: #dc3545;
+  color: white;
+  border-radius: 4px;
+  margin-left: 5px;
+  cursor: pointer;
+}
