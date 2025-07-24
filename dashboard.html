@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="dashboard.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-
   <script>
     if (localStorage.getItem("loggedIn") !== "true") {
       window.location.href = "login.html";
@@ -38,11 +37,9 @@
     <!-- Main Content -->
     <div class="main">
       <header>
-        
         <div class="header-right">
           <a href="#" class="notification-btn">Notification</a>
           <a href="#" class="message-btn">Message</a>
-
           <div class="profile-dropdown">
             <a href="#" class="profile-btn" onclick="toggleDropdown(event)">Profile <i class="fas fa-caret-down"></i></a>
             <div id="dropdown-menu" class="dropdown-content">
@@ -50,13 +47,12 @@
               <a href="#">Settings</a>
             </div>
           </div>
-
           <a href="#" onclick="logout()" class="logout-btn">Logout</a>
         </div>
       </header>
 
       <section class="content">
-        <!-- Default Content Will Be Loaded Here -->
+        <!-- Default Content Loaded Here -->
       </section>
     </div>
   </div>
@@ -102,7 +98,6 @@
         });
     }
 
-    // Product page initialization: modal, edit, delete, filtering
     function initProductPage() {
       const addProductBtn = document.getElementById("addProductBtn");
       const modal = document.getElementById("addProductModal");
@@ -114,7 +109,30 @@
 
       if (!addProductBtn || !modal || !closeModal || !form || !searchInput || !categoryFilter || !tableBody) return;
 
-      let editingRow = null; // Track editing row
+      let editingRow = null;
+
+      function filterTable() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const selectedCategory = categoryFilter.value;
+
+        Array.from(tableBody.rows).forEach(row => {
+          const name = row.cells[1].textContent.toLowerCase();
+          const category = row.cells[2].textContent;
+          const matchesSearch = name.includes(searchTerm);
+          const matchesCategory = selectedCategory === "" || selectedCategory === "Filter by category" || category === selectedCategory;
+          row.style.display = (matchesSearch && matchesCategory) ? "" : "none";
+        });
+      }
+
+      function updateCategoryDropdown(category) {
+        const exists = Array.from(categoryFilter.options).some(opt => opt.value === category);
+        if (!exists && category !== "") {
+          const newOption = document.createElement("option");
+          newOption.value = category;
+          newOption.textContent = category;
+          categoryFilter.appendChild(newOption);
+        }
+      }
 
       addProductBtn.addEventListener("click", () => {
         editingRow = null;
@@ -122,17 +140,11 @@
         modal.style.display = "block";
       });
 
-      closeModal.addEventListener("click", () => {
-        modal.style.display = "none";
-      });
-
-      window.addEventListener("click", (e) => {
-        if (e.target === modal) modal.style.display = "none";
-      });
+      closeModal.addEventListener("click", () => modal.style.display = "none");
+      window.addEventListener("click", (e) => { if (e.target === modal) modal.style.display = "none"; });
 
       form.addEventListener("submit", function (e) {
         e.preventDefault();
-
         const data = {
           id: form[0].value.trim(),
           name: form[1].value.trim(),
@@ -149,12 +161,9 @@
           return;
         }
 
-        let statusLabel = '';
-        if (data.status === 'in-stock') {
-          statusLabel = `<span style="background-color: #d4edda; color: #155724; padding: 4px 8px; border-radius: 15px; font-size: 12px;">In Stock</span>`;
-        } else if (data.status === 'stock-out') {
-          statusLabel = `<span style="background-color: #f8d7da; color: #721c24; padding: 4px 8px; border-radius: 15px; font-size: 12px;">Stock Out</span>`;
-        }
+        let statusLabel = data.status === 'in-stock'
+          ? `<span style="background-color: #d4edda; color: #155724; padding: 4px 8px; border-radius: 15px; font-size: 12px;">In Stock</span>`
+          : `<span style="background-color: #f8d7da; color: #721c24; padding: 4px 8px; border-radius: 15px; font-size: 12px;">Stock Out</span>`;
 
         if (editingRow) {
           const cells = editingRow.querySelectorAll("td");
@@ -168,51 +177,35 @@
           cells[7].textContent = data.lastUpdated;
         } else {
           const newRow = document.createElement("tr");
-          newRow.style.borderBottom = "1px solid #f2f2f2";
           newRow.innerHTML = `
-            <td style="padding: 10px;">${data.id}</td>
-            <td style="padding: 10px;">${data.name}</td>
-            <td style="padding: 10px;">${data.category}</td>
-            <td style="padding: 10px;">${data.price}</td>
-            <td style="padding: 10px;">${data.stock}</td>
-            <td style="padding: 10px;">${statusLabel}</td>
-            <td style="padding: 10px;">${data.supplier}</td>
-            <td style="padding: 10px;">${data.lastUpdated}</td>
-            <td style="padding: 10px;">
-              <button onclick="editProduct(this)" style="padding: 4px 8px; border: none; background: #ffc107; color: white; border-radius: 4px;">Edit</button>
-              <button onclick="deleteProduct(this)" style="padding: 4px 8px; border: none; background: #dc3545; color: white; border-radius: 4px;">Delete</button>
+            <td>${data.id}</td>
+            <td>${data.name}</td>
+            <td>${data.category}</td>
+            <td>${data.price}</td>
+            <td>${data.stock}</td>
+            <td>${statusLabel}</td>
+            <td>${data.supplier}</td>
+            <td>${data.lastUpdated}</td>
+            <td>
+              <button onclick="editProduct(this)" style="padding:4px 8px;background:#ffc107;color:white;border:none;border-radius:4px;">Edit</button>
+              <button onclick="deleteProduct(this)" style="padding:4px 8px;background:#dc3545;color:white;border:none;border-radius:4px;">Delete</button>
             </td>
           `;
           tableBody.appendChild(newRow);
+          updateCategoryDropdown(data.category);
         }
 
-        alert("✅ Product saved successfully.");
         modal.style.display = "none";
         form.reset();
         editingRow = null;
+        filterTable();
+        alert("✅ Product saved successfully.");
       });
-
-      // Filtering function
-      function filterTable() {
-        const searchTerm = searchInput.value.toLowerCase();
-        const selectedCategory = categoryFilter.value;
-
-        Array.from(tableBody.rows).forEach(row => {
-          const cells = row.cells;
-          const name = cells[1].textContent.toLowerCase();
-          const category = cells[2].textContent;
-          const matchesSearch = name.includes(searchTerm);
-          const matchesCategory = selectedCategory === "" || selectedCategory === "Filter by category" || category === selectedCategory;
-
-          row.style.display = (matchesSearch && matchesCategory) ? "" : "none";
-        });
-      }
 
       searchInput.addEventListener("input", filterTable);
       categoryFilter.addEventListener("change", filterTable);
     }
 
-    // Global edit and delete functions used by buttons
     function editProduct(button) {
       const row = button.closest('tr');
       const cells = row.querySelectorAll('td');
@@ -227,17 +220,11 @@
       form[5].value = cells[6].textContent;
 
       const statusSpan = cells[5].querySelector('span');
-      if (statusSpan) {
-        if (statusSpan.textContent.trim() === "In Stock") form[6].value = "in-stock";
-        else if (statusSpan.textContent.trim() === "Stock Out") form[6].value = "stock-out";
-      }
-
+      form[6].value = statusSpan && statusSpan.textContent.includes('In Stock') ? 'in-stock' : 'stock-out';
       form[7].value = cells[7].textContent;
 
       modal.style.display = "block";
-
-      // Remember row being edited
-      window.editingRow = row;
+      editingRow = row;
     }
 
     function deleteProduct(button) {

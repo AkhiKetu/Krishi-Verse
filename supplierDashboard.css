@@ -400,12 +400,13 @@ header {
 }
 
 .new-request-btn {
-  background: #ff6600;
+  background: #ec701d;
   color: #fff;
   padding: 8px 14px;
   border: none;
   border-radius: 6px;
   font-weight: bold;
+  cursor: pointer;
 }
 
 .transport-list {
