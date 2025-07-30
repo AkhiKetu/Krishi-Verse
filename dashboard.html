@@ -95,13 +95,14 @@
 
           if (page === 'product') initProductPage();
           if (page === 'warehouse') initWarehousePage();
+          if (page === 'consumers') initConsumerPage();
         })
         .catch(err => {
           contentArea.innerHTML = `<p>Error loading ${page} content.</p>`;
         });
     }
 
-    // Make this global for edit function
+    // ---------- Product Page Logic ----------
     let editingRow = null;
 
     function editProduct(button) {
@@ -245,6 +246,7 @@
       }
     }
 
+    // ---------- Warehouse Page Logic ----------
     function initWarehousePage() {
       const addBtn = document.getElementById("addWarehouseBtn");
       const modal = document.getElementById("addWarehouseModal");
@@ -330,7 +332,7 @@
       function updateSummary() {
         const total = warehouseData.length;
         const totalCap = warehouseData.reduce((sum, w) => sum + w.capacity, 0);
-        const occupied = Math.floor(totalCap * 0.7); // example
+        const occupied = Math.floor(totalCap * 0.7); // example occupancy
         const utilization = totalCap ? Math.round((occupied / totalCap) * 100) : 0;
 
         totalWarehousesEl.textContent = total;
@@ -343,7 +345,139 @@
       updateSummary();
     }
 
-    // Load default home content
+    // ---------- Consumer Page Logic ----------
+    function initConsumerPage() {
+      const addBtn = document.querySelector('.add-consumer-btn');
+      const modal = document.getElementById('addConsumerModal');
+      const form = document.getElementById('consumerForm');
+      const tbody = document.getElementById('consumerTableBody');
+      const searchInput = document.querySelector('.filter-row input[type="text"]');
+      const typeFilter = document.querySelectorAll('.filter-row select')[0];
+      const statusFilter = document.querySelectorAll('.filter-row select')[1];
+
+      // Cards on consumer page (note your existing 'feedbackCount' instead of customer count)
+      const countCards = {
+        farmer: document.getElementById('totalFarmers'),
+        supplier: document.getElementById('totalSuppliers'),
+        customer: document.getElementById('feedbackCount'),
+        newThisMonth: document.getElementById('newThisMonth'),
+      };
+
+      let consumers = [];
+
+      if (!addBtn || !modal || !form || !tbody || !searchInput || !typeFilter || !statusFilter) {
+        console.warn('Consumer page elements missing');
+        return;
+      }
+
+      addBtn.onclick = () => {
+        modal.style.display = 'flex';
+      };
+
+      function closeConsumerModal() {
+        modal.style.display = 'none';
+        form.reset();
+      }
+      const closeBtn = modal.querySelector('.close-btn');
+      closeBtn.onclick = () => {
+      modal.style.display = 'none';
+      form.reset();
+    }
+
+
+      window.closeConsumerModal = closeConsumerModal;
+
+      form.onsubmit = function (e) {
+        e.preventDefault();
+
+        const name = document.getElementById('consumerName').value.trim();
+        const type = document.getElementById('consumerType').value.toLowerCase();
+        const email = document.getElementById('consumerEmail').value.trim();
+        const phone = document.getElementById('consumerPhone').value.trim();
+        const status = document.getElementById('consumerStatus').value.toLowerCase();
+
+        const location = 'Unknown'; // Optional: add location input if needed
+
+        const consumer = { name, type, email, phone, location, status };
+
+        consumers.push(consumer);
+        updateTable();
+        updateCards();
+        closeConsumerModal();
+      };
+
+      function updateTable() {
+        tbody.innerHTML = '';
+
+        const search = searchInput.value.toLowerCase();
+        const filterType = typeFilter.value.toLowerCase();
+        const filterStatus = statusFilter.value.toLowerCase();
+
+        consumers.forEach((c) => {
+          const matchesSearch =
+            c.name.toLowerCase().includes(search) ||
+            c.email.toLowerCase().includes(search) ||
+            c.phone.toLowerCase().includes(search) ||
+            c.location.toLowerCase().includes(search);
+
+          const matchesType = filterType === 'filter by type' || c.type === filterType;
+          const matchesStatus = filterStatus === 'filter by status' || c.status === filterStatus;
+
+          if (matchesSearch && matchesType && matchesStatus) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${c.name}</td>
+              <td><span class="type-tag ${c.type}">${capitalize(c.type)}</span></td>
+              <td>${c.location}</td>
+              <td>📧 ${c.email}<br/>📞 ${c.phone}</td>
+              <td><span class="status-tag ${c.status}">${capitalize(c.status)}</span></td>
+            `;
+            tbody.appendChild(tr);
+          }
+        });
+      }
+
+      function updateCards() {
+        const totals = { farmer: 0, supplier: 0, customer: 0 };
+        consumers.forEach(c => {
+          if (c.type in totals) totals[c.type]++;
+        });
+        countCards.farmer.textContent = totals.farmer;
+        countCards.supplier.textContent = totals.supplier;
+        if (countCards.customer) countCards.customer.textContent = totals.customer;
+        countCards.newThisMonth.textContent = consumers.length;
+      }
+
+      function capitalize(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+      }
+
+      // Events for search/filter
+      searchInput.addEventListener('input', updateTable);
+      typeFilter.addEventListener('change', updateTable);
+      statusFilter.addEventListener('change', updateTable);
+
+      // Load existing static rows from HTML table into consumers array for filtering/search
+      const existingRows = document.querySelectorAll('#consumerTableBody tr');
+      existingRows.forEach(row => {
+        const name = row.children[0].textContent;
+        const type = row.children[1].textContent.trim().toLowerCase();
+        const location = row.children[2].textContent;
+        const contact = row.children[3].innerHTML;
+        const emailMatch = contact.match(/📧\s(.+?)<br/);
+        const phoneMatch = contact.match(/📞\s(.+)/);
+        const email = emailMatch ? emailMatch[1] : '';
+        const phone = phoneMatch ? phoneMatch[1] : '';
+        const status = row.children[4].textContent.trim().toLowerCase();
+
+        consumers.push({ name, type, email, phone, location, status });
+      });
+
+      updateCards();
+      updateTable();
+    }
+
+    // Load default home content on page load
     window.addEventListener('DOMContentLoaded', () => {
       loadContent('home');
     });

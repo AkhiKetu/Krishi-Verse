@@ -1,7 +1,109 @@
-<h1>Consumer Records</h1>
-<p>Manage farmers, suppliers, and customers.</p>
-<div class="cards">
-  <div class="card">Farmers List</div>
-  <div class="card">Suppliers</div>
-  <div class="card">Customer Feedback</div>
+<div class="consumer-section">
+  <div class="header">
+    <div>
+      <h1>Consumer Management</h1>
+      <p>Manage farmers, suppliers, and customers.</p>
+    </div>
+    <button class="add-consumer-btn">+ Add Consumer</button>
+  </div>
+
+  <div class="overview-cards">
+    <div class="card">
+      <p>Total Farmers</p>
+      <h3 id="totalFarmers">25</h3>
+    </div>
+    <div class="card">
+      <p>Total Suppliers</p>
+      <h3 id="totalSuppliers">12</h3>
+    </div>
+    <div class="card">
+      <p>Customer</p>
+      <h3 id="feedbackCount">76</h3>
+    </div>
+    <div class="card">
+      <p>New This Month</p>
+      <h3 id="newThisMonth">8</h3>
+    </div>
+  </div>
+
+  <div class="filter-row">
+    <input type="text" placeholder="Search consumers..." />
+    <select>
+      <option>Filter by type</option>
+      <option>Farmer</option>
+      <option>Supplier</option>
+      <option>Customer</option>
+    </select>
+    <select>
+      <option>Filter by status</option>
+      <option>Active</option>
+      <option>Inactive</option>
+    </select>
+  </div>
+
+  <div class="directory">
+    <h2>Consumer Directory</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Location</th>
+          <th>Contact</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="consumerTableBody">
+        <tr>
+          <td>Green Valley Farm</td>
+          <td><span class="type-tag farmer">Farmer</span></td>
+          <td>Rajshahi</td>
+          <td>📧 gvfarm@email.com<br/>📞 +880 1712-123456</td>
+          <td><span class="status-tag active">Active</span></td>
+        </tr>
+        <tr>
+          <td>Agro Supplier Ltd.</td>
+          <td><span class="type-tag supplier">Supplier</span></td>
+          <td>Dhaka</td>
+          <td>📧 contact@agrosupply.com<br/>📞 +880 1911-654321</td>
+          <td><span class="status-tag inactive">Inactive</span></td>
+        </tr>
+        <!-- More rows dynamically -->
+      </tbody>
+    </table>
+  </div>
+<!-- Add Consumer Modal -->
+<div id="addConsumerModal" class="modal-overlay" style="display: none;">
+  <div class="modal-box">
+    <span class="close-btn">&times;</span>
+    <h2>Add New Consumer</h2>
+    <form id="consumerForm">
+      <label for="consumerName">Full Name:</label>
+      <input type="text" id="consumerName" required />
+
+      <label for="consumerType">Type:</label>
+      <select id="consumerType" required>
+        <option value="">Select type</option>
+        <option value="farmer">Farmer</option>
+        <option value="supplier">Supplier</option>
+        <option value="customer">Customer</option>
+      </select>
+
+      <label for="consumerEmail">Email:</label>
+      <input type="email" id="consumerEmail" />
+
+      <label for="consumerPhone">Phone:</label>
+      <input type="text" id="consumerPhone" />
+
+      <label for="consumerStatus">Status:</label>
+      <select id="consumerStatus" required>
+        <option value="active">Active</option>
+        <option value="inactive">Inactive</option>
+      </select>
+
+      <button type="submit" class="submit-btn">Add Consumer</button>
+    </form>
+  </div>
 </div>
+
+

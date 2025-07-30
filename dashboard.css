@@ -801,3 +801,238 @@ th, td {
   background-color: #089f8f;
 }
 
+
+/* Consumer Section */
+.consumer-section {
+  padding: 20px;
+  font-family: 'Inter', sans-serif;
+}
+
+.consumer-section .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.consumer-section .header h1 {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.consumer-section .header p {
+  font-size: 14px;
+  color: #666;
+  margin-top: 4px;
+}
+
+/* Add Consumer Button */
+.add-consumer-btn {
+  background-color: #2e7d32;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.add-consumer-btn:hover {
+  background-color: #256928;
+}
+
+/* Overview Cards */
+.overview-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.overview-cards .card {
+  background-color: #f8f9fa;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.overview-cards .card p {
+  font-size: 13px;
+  color: #777;
+  margin: 0;
+}
+
+.overview-cards .card h3 {
+  font-size: 20px;
+  margin-top: 4px;
+  color: #333;
+}
+
+/* Filters */
+.filter-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.filter-row input,
+.filter-row select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  flex: 1;
+  min-width: 200px;
+}
+
+/* Directory Table */
+.directory {
+  margin-top: 20px;
+}
+
+.directory h2 {
+  font-size: 18px;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.directory table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.directory th,
+.directory td {
+  padding: 14px 16px;
+  text-align: left;
+  font-size: 14px;
+  border-bottom: 1px solid #eee;
+}
+
+.directory th {
+  background-color: #f2f2f2;
+  color: #555;
+}
+
+/* Type Tags */
+.type-tag {
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 20px;
+  color: white;
+  font-weight: 500;
+}
+
+.type-tag.farmer {
+  background-color: #388e3c;
+}
+
+.type-tag.supplier {
+  background-color: #1976d2;
+}
+
+.type-tag.customer {
+  background-color: #8e24aa;
+}
+
+/* Status Tags */
+.status-tag {
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+.status-tag.active {
+  background-color: #c8e6c9;
+  color: #256928;
+}
+
+.status-tag.inactive {
+  background-color: #ffe0b2;
+  color: #ef6c00;
+}
+
+/* Modal Overlay - fullscreen, semi-transparent, centered */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;               /* Flex container */
+  justify-content: center;     /* Center horizontally */
+  align-items: center;         /* Center vertically */
+  z-index: 9999;
+}
+
+/* Modal Box - content container */
+.modal-box {
+  background: #fff;
+  padding: 24px 30px;
+  border-radius: 12px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  position: relative;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Close button */
+.close-btn {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  font-size: 22px;
+  color: #666;
+  cursor: pointer;
+}
+
+/* Form inputs and labels inside modal */
+.modal-box label {
+  display: block;
+  margin: 10px 0 4px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.modal-box input,
+.modal-box select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+/* Submit button inside modal */
+.modal-box .submit-btn {
+  width: 100%;
+  padding: 10px 0;
+  background-color: #4caf50;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.modal-box .submit-btn:hover {
+  background-color: #43a047;
+}
