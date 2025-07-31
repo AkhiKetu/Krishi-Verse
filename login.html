@@ -17,7 +17,7 @@
       <!-- Designation Dropdown -->
       <select id="designation" required>
         <option value="" disabled selected>Select Designation</option>
-        <option value="admin">Admin</option>
+        <option value="warehouseManager">Warehouse Manager</option>
         <option value="supplier">Supplier</option>
         <option value="transporter">Transporter</option>
         <option value="distributor">Distributor</option>
@@ -43,12 +43,12 @@
 
     // Demo credentials
     const demoCredentials = {
-      admin: { username: "admin", password: "1234", redirect: "dashboard.html" },
+      warehouseManager: { username: "warehouseManager", password: "1234", redirect: "dashboard.html" },
       supplier: { username: "supplier", password: "1234", redirect: "supplierDashboard.html" },
     };
 
     const user = demoCredentials[designation];
-
+    
     if (user && username === user.username && password === user.password) {
       localStorage.setItem("loggedIn", "true");
       window.location.href = user.redirect;

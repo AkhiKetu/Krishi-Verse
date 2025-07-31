@@ -20,7 +20,7 @@
       <h2 class="logo">Krishi-Verse</h2>
       <div class="user">
         <img src="panda.jpeg" alt="User" />
-        <p>Akhi Ketu<br><span>Admin</span></p>
+        <p>Akhi Ketu<br><span>Warehouse-Manager</span></p>
       </div>
       <nav>
         <ul>
@@ -396,7 +396,7 @@
         const phone = document.getElementById('consumerPhone').value.trim();
         const status = document.getElementById('consumerStatus').value.toLowerCase();
 
-        const location = 'Unknown'; // Optional: add location input if needed
+        const location = document.getElementById('location').value.trim();
 
         const consumer = { name, type, email, phone, location, status };
 

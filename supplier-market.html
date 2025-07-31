@@ -1,0 +1,122 @@
+<h2>Market Prices</h2>
+<p class="subtitle">Track commodity prices and set alerts</p>
+
+<div class="summary-cards">
+  <div class="card">
+    <h4>Tracked Commodities</h4>
+    <p>5</p>
+  </div>
+  <div class="card">
+    <h4>Watchlist Items</h4>
+    <p>3</p>
+  </div>
+  <div class="card alert">
+    <h4>Active Alerts</h4>
+    <p>3</p>
+  </div>
+  <div class="card change">
+    <h4>Avg. Change</h4>
+    <p>-0.71%</p>
+  </div>
+</div>
+
+<div class="controls">
+  <input type="text" placeholder="Search commodities..." />
+  <button class="filter-btn">🔍</button>
+  <select>
+    <option>All Trends</option>
+    <option>Rising</option>
+    <option>Falling</option>
+  </select>
+  <label class="switch">
+    <input type="checkbox">
+    <span class="slider"></span>
+  </label>
+  <button class="set-alert">⚠️ Set Price Alert</button>
+  <button class="add-btn">+ Add Commodity</button>
+</div>
+
+<div class="market-section">
+  <div class="market-table">
+    <h3>Market Prices</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Commodity</th>
+          <th>Current Price</th>
+          <th>Change</th>
+          <th>Volume</th>
+          <th>Market</th>
+          <th>Updated</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <strong>Wheat</strong><br />
+            <small>Hard Red Winter • Grade A</small>
+          </td>
+          <td>$285<br /><small>per ton</small></td>
+          <td class="positive">+$5<br /><small>+1.79%</small></td>
+          <td>1,250<br /><small>tons</small></td>
+          <td>Chicago Board of Trade</td>
+          <td>2 hours ago</td>
+          <td>
+            <span class="action">🔔</span>
+            <span class="action">📊</span>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <strong>Corn</strong><br />
+            <small>Yellow Dent • Grade 2</small>
+          </td>
+          <td>$195<br /><small>per ton</small></td>
+          <td class="negative">−$10<br /><small>−4.88%</small></td>
+          <td>890<br /><small>tons</small></td>
+          <td>CBOT</td>
+          <td>1 hour ago</td>
+          <td>
+            <span class="action">🔔</span>
+            <span class="action">📊</span>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <strong>Soybeans</strong><br />
+            <small>Non-GMO • Grade A</small>
+          </td>
+          <td>$420<br /><small>per ton</small></td>
+          <td class="positive">+$25<br /><small>+6.33%</small></td>
+          <td>650<br /><small>tons</small></td>
+          <td>CBOT</td>
+          <td>30 minutes ago</td>
+          <td>
+            <span class="action">🔔</span>
+            <span class="action">📊</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="price-alerts">
+    <h3>🔔 Price Alerts</h3>
+    <div class="alert-box">
+      💲 <strong>Wheat - Target Reached</strong><br />
+      <small>Wheat reached your target price of $285/ton</small>
+      <span class="close">×</span>
+    </div>
+    <div class="alert-box">
+      💲 <strong>Corn - Price Drop</strong><br />
+      <small>Corn dropped below $200/ton threshold</small>
+      <span class="close">×</span>
+    </div>
+    <div class="alert-box">
+      💲 <strong>Soybeans - High Alert</strong><br />
+      <small>Soybeans approaching your sell target</small>
+      <span class="close">×</span>
+    </div>
+  </div>
+</div>
