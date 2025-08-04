@@ -25,7 +25,11 @@
         <th>Stock</th>
         <th>Status</th>
         <th>Supplier</th>
-        <th>Last Updated</th>
+        <th>Planting Date</th>
+        <th>Expected Harvest</th>
+        <th>Shelf Life</th>
+        <th>Storage Temp</th>
+        <th>Humidity</th>
         <th>Actions</th>
       </tr>
     </thead>
@@ -38,7 +42,11 @@
         <td>450</td>
         <td><span class="status in-stock">In Stock</span></td>
         <td>Green Farm Co.</td>
-        <td>2024-01-15</td>
+        <td>2023-11-01</td>
+        <td>2024-01-25</td>
+        <td>10 days</td>
+        <td>8°C</td>
+        <td>85%</td>
         <td>
           <button class="edit-btn" onclick="editProduct(this)">Edit</button>
           <button class="delete-btn" onclick="deleteProduct(this)">Delete</button>
@@ -48,25 +56,15 @@
         <td>P002</td>
         <td>Sunflower Seeds</td>
         <td>Seeds</td>
-        <td>$1.20/kg</td>
+        <td>$1.20/pack</td>
         <td>1200</td>
-        <td><span class="status stock-out">Stock Out</span></td>
-        <td>Seed Masters Ltd.</td>
-        <td>2024-01-20</td>
-        <td>
-          <button class="edit-btn" onclick="editProduct(this)">Edit</button>
-          <button class="delete-btn" onclick="deleteProduct(this)">Delete</button>
-        </td>
-      </tr>
-      <tr>
-        <td>P003</td>
-        <td>Fresh Carrots</td>
-        <td>Vegetables</td>
-        <td>$2.00/kg</td>
-        <td>300</td>
         <td><span class="status in-stock">In Stock</span></td>
-        <td>Veggie World</td>
-        <td>2024-01-18</td>
+        <td>Seed World Ltd.</td>
+        <td>2023-10-15</td>
+        <td>2024-02-10</td>
+        <td>6 months</td>
+        <td>Room Temp</td>
+        <td>60%</td>
         <td>
           <button class="edit-btn" onclick="editProduct(this)">Edit</button>
           <button class="delete-btn" onclick="deleteProduct(this)">Delete</button>
@@ -84,16 +82,38 @@
     <form id="addProductForm">
       <input type="text" placeholder="Product ID" required />
       <input type="text" placeholder="Name" required />
-      <input type="text" placeholder="Category" required />
+
+      <!-- Category Dropdown -->
+      <select required>
+        <option value="" disabled selected>Select Category</option>
+        <option value="Vegetables">Vegetables</option>
+        <option value="Seeds">Seeds</option>
+      </select>
+
       <input type="text" placeholder="Price" required />
       <input type="number" placeholder="Stock" required />
       <input type="text" placeholder="Supplier" required />
+
       <select required>
         <option value="" disabled selected>Select Status</option>
         <option value="in-stock">In Stock</option>
         <option value="stock-out">Stock Out</option>
       </select>
-      <input type="date" placeholder="Last Updated" required />
+
+      <div class="form-group">
+        <label for="plantingDate">Planting Date</label>
+        <input type="date" id="plantingDate" name="plantingDate" required />
+      </div>
+
+      <div class="form-group">
+        <label for="harvestDate">Expected Harvesting Date</label>
+        <input type="date" id="harvestDate" name="harvestDate" required />
+      </div>
+
+      <input type="text" placeholder="Shelf Life (e.g. 10 days)" required />
+      <input type="text" placeholder="Storage Temperature (e.g. 8°C)" required />
+      <input type="text" placeholder="Humidity (e.g. 85%)" required />
+
       <button type="submit">Save Product</button>
     </form>
   </div>

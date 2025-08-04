@@ -1,0 +1,79 @@
+<h2>Document Management</h2>
+<p>Upload and manage supply chain documents securely.</p>
+<button class="add-btn" onclick="openUploadModal()">+ Upload Document</button>
+
+<!-- Stats Cards -->
+<div class="stats-cards">
+  <div class="card"><h4>Total Documents</h4><h2 id="total-documents">0</h2></div>
+  <div class="card"><h4>Pending Review</h4><h2 id="pending-documents">0</h2></div>
+  <div class="card"><h4>Compliance Rate</h4><h2 id="compliance-rate">0%</h2></div>
+  <div class="card"><h4>Expiring Soon</h4><h2 id="expiring-documents">0</h2></div>
+</div>
+
+<!-- Filter Controls -->
+<div class="filters">
+  <input type="text" id="searchInput" placeholder="Search documents..." />
+  <select id="typeFilter">
+    <option value="">All Types</option>
+    <option value="Invoice">Invoice</option>
+    <option value="Bill of Lading">Bill of Lading</option>
+  </select>
+  <select id="statusFilter">
+    <option value="">All Status</option>
+    <option value="Pending Review">Pending Review</option>
+    <option value="Approved">Approved</option>
+    <option value="Rejected">Rejected</option>
+  </select>
+</div>
+
+<!-- Document Table -->
+<div class="document-table">
+  <table>
+    <thead>
+      <tr>
+        <th>Document Info</th>
+        <th>Shipment Info</th>
+        <th>Dates</th>
+        <th>Status</th>
+        <th>Compliance</th>
+        <th>File Size</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="documentBody">
+      <!-- Dynamic rows -->
+    </tbody>
+  </table>
+</div>
+
+<!-- Upload Modal -->
+<div id="uploadModal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeUploadModal()">&times;</span>
+    <h3>Upload Document</h3>
+    <form id="uploadForm">
+      <label>Document Type:</label>
+      <input type="text" name="docType" required />
+
+      <label>Document Number:</label>
+      <input type="text" name="docNumber" required />
+
+      <label>Shipment ID:</label>
+      <input type="text" name="shipmentId" required />
+
+      <label>Product Name:</label>
+      <input type="text" name="productName" required />
+
+      <label>Distribution Center:</label>
+      <input type="text" name="distribution" required />
+
+      <label>Issue Date:</label>
+      <input type="date" name="issueDate" required />
+
+      <label>Expiry Date:</label>
+      <input type="date" name="expiryDate" required />
+
+      <button type="submit" class="save-btn">Save Document</button>
+    </form>
+  </div>
+</div>

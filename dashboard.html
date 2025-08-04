@@ -28,9 +28,10 @@
           <li><a href="#" data-page="home"><i class="fas fa-home"></i> Home</a></li>
           <li><a href="#" data-page="product"><i class="fas fa-box"></i> Products</a></li>
           <li><a href="#" data-page="warehouse"><i class="fas fa-warehouse"></i> Warehouse</a></li>
-          <li><a href="#" data-page="analysis"><i class="fas fa-chart-bar"></i> Analysis</a></li>
+          <li><a href="#" data-page="documents"><i class="fas fa-file-alt"></i> Documents</a></li>
           <li><a href="#" data-page="consumers"><i class="fas fa-users"></i> Consumers</a></li>
           <li><a href="#" data-page="weather"><i class="fas fa-cloud-sun"></i> Weather</a></li>
+          <li><a href="#" data-page="transportation"><i class="fas fa-tools"></i> Transportation</a></li>
         </ul>
       </nav>
     </aside>
@@ -98,13 +99,15 @@
           if (page === 'warehouse') initWarehousePage();
           if (page === 'consumers') initConsumerPage();
           if (page === 'home') loadHomeChart();
+          if (page === 'transportation') initTransportationPage();
+          if (page === 'documents') initDocumentPage();
 
         })
         .catch(err => {
           contentArea.innerHTML = `<p>Error loading ${page} content.</p>`;
         });
     }
-
+    
     function loadHomeChart() {
       fetch('product.html')
         .then(res => res.text())
@@ -168,6 +171,198 @@
           }
         });
     }
+
+// ---------- Transportation Page Logic ----------
+function initTransportationPage() {
+  const modal = document.getElementById('scheduleModal');
+  const scheduleBtn = document.querySelector('.schedule-btn');
+  const form = document.querySelector('.schedule-form');
+  const tableBody = document.querySelector('.transport-table tbody');
+
+  const summaryActiveRoutes = document.querySelector('.summary-cards .card:nth-child(1) .value');
+  const summaryScheduledToday = document.querySelector('.summary-cards .card:nth-child(1) .sub');
+  const availableVehiclesCount = document.querySelector('.summary-cards .card:nth-child(2) .value');
+
+  // List of vehicles for availability calculation
+  const vehicleList = ['RT-001', 'RT-002', 'DC-003', 'DC-004'];
+
+  if (!modal || !scheduleBtn || !form || !tableBody) {
+    console.warn("Transportation page elements not found.");
+    return;
+  }
+
+  // Open modal when schedule button clicked
+  scheduleBtn.onclick = () => {
+    form.reset();
+    modal.style.display = 'block';
+    form.setAttribute('data-editing', 'false');
+    form.editingRow = null;
+  };
+
+  // Close modal when clicking outside modal content or on close button
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.style.display = 'none';
+    }
+  });
+  const closeBtn = modal.querySelector('.close');
+  closeBtn.onclick = () => {
+    modal.style.display = 'none';
+  };
+
+  // Cancel button inside modal
+  form.querySelector('.cancel-btn').onclick = () => {
+    modal.style.display = 'none';
+  };
+
+  // Handle form submission (add/edit route)
+  form.onsubmit = function (e) {
+    e.preventDefault();
+
+    const editing = form.getAttribute('data-editing') === 'true';
+    const editingRow = form.editingRow;
+
+    const origin = form.origin.value.trim();
+    const destination = form.destination.value.trim();
+    const product = form.product.value;
+    const weight = form.weight.value.trim();
+    const vehicle = form.vehicle.value;
+    const driver = form.driver.value;
+    const date = form.date.value;
+    const time = form.time.value;
+    const priority = form.priority.value;
+    const notes = form.notes.value.trim();
+
+    if (!origin || !destination || !product || !weight || !vehicle || !driver || !date || !time || !priority) {
+      alert("Please fill in all required fields.");
+      return;
+    }
+
+    // Generate route ID or keep existing if editing
+    const routeId = editing && editingRow ? editingRow.dataset.id : "TRP-" + Math.floor(Math.random() * 900 + 100);
+
+    // Compose table cells HTML
+    const routeText = `${origin} → ${destination}<br><small>${product} (${weight})</small>`;
+    const vehicleDriver = `🚛 ${vehicle}<br>👤 ${driver}`;
+    const scheduleText = `${date}<br>${time}`;
+    const distance = `${Math.floor(Math.random() * 100 + 20)} km<br><small>ETA: ${Math.floor(Math.random() * 3 + 1)} hrs</small>`;
+    const priorityTag = `<span class="priority ${priority.toLowerCase()}">${priority}</span>`;
+    const statusTag = `<span class="status scheduled">Scheduled</span>`;
+
+    const rowHTML = `
+      <td>${routeId}</td>
+      <td>${routeText}</td>
+      <td>${vehicleDriver}</td>
+      <td>${scheduleText}</td>
+      <td>${distance}</td>
+      <td>${priorityTag}</td>
+      <td>${statusTag}</td>
+      <td>
+        <button class="edit-btn">Edit</button>
+        <button class="delete-btn">Delete</button>
+      </td>
+    `;
+
+    if (editing && editingRow) {
+      editingRow.innerHTML = rowHTML;
+      editingRow.dataset.id = routeId;
+    } else {
+      const newRow = document.createElement("tr");
+      newRow.innerHTML = rowHTML;
+      newRow.dataset.id = routeId;
+      tableBody.appendChild(newRow);
+    }
+
+    modal.style.display = 'none';
+    form.reset();
+    updateSummaryCards();
+    updateFleetStatus();
+    bindEditDeleteButtons();
+  };
+
+  // Attach edit and delete event handlers to buttons in table
+  function bindEditDeleteButtons() {
+    tableBody.querySelectorAll('.edit-btn').forEach(btn => {
+      btn.onclick = (e) => {
+        const row = e.target.closest('tr');
+        const cells = row.querySelectorAll('td');
+
+        // Parse the route & product cell's innerHTML
+        const html = cells[1].innerHTML;
+        const [routePart, productPart] = html.split('<br><small>');
+        const [originText, destinationText] = routePart.split('→').map(s => s.trim());
+        const productName = productPart.replace(')</small>', '').split('(')[0].trim();
+        const weight = productPart.match(/\(([^)]+)\)/)[1];
+
+        form.setAttribute('data-editing', 'true');
+        form.editingRow = row;
+
+        // Fill form fields
+        form.origin.value = originText;
+        form.destination.value = destinationText;
+        form.product.value = productName;
+        form.weight.value = weight;
+        form.vehicle.value = cells[2].innerText.split('\n')[0].replace("🚛 ", "").trim();
+        form.driver.value = cells[2].innerText.split('\n')[1].replace("👤 ", "").trim();
+        form.date.value = cells[3].innerText.split('\n')[0];
+        form.time.value = cells[3].innerText.split('\n')[1];
+        form.priority.value = cells[5].innerText.trim();
+
+        modal.style.display = 'block';
+      };
+    });
+
+    tableBody.querySelectorAll('.delete-btn').forEach(btn => {
+      btn.onclick = (e) => {
+        if (confirm("Are you sure you want to delete this route?")) {
+          e.target.closest('tr').remove();
+          updateSummaryCards();
+          updateFleetStatus();
+        }
+      };
+    });
+  }
+
+  // Update summary cards at top
+  function updateSummaryCards() {
+    const rows = tableBody.querySelectorAll('tr');
+    const today = new Date().toISOString().split('T')[0];
+    let scheduledToday = 0;
+
+    rows.forEach(row => {
+      const scheduleDate = row.cells[3].innerText.split('\n')[0];
+      if (scheduleDate === today) scheduledToday++;
+    });
+
+    summaryActiveRoutes.textContent = rows.length;
+    summaryScheduledToday.textContent = `${scheduledToday} scheduled for today`;
+  }
+
+  // Update available vehicles count in summary
+  function updateFleetStatus() {
+    const usedVehicles = Array.from(tableBody.querySelectorAll('tr')).map(row =>
+      row.cells[2].innerText.split('\n')[0].replace("🚛 ", "").trim()
+    );
+    const available = vehicleList.filter(v => !usedVehicles.includes(v));
+    availableVehiclesCount.textContent = available.length;
+  }
+
+  // Initialize on load
+  updateSummaryCards();
+  updateFleetStatus();
+  bindEditDeleteButtons();
+}
+
+// Initialize after DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+  initTransportationPage();
+});
+
+
+
+
+
+
 
     // ---------- Product Page Logic ----------
     let editingRow = null;
@@ -250,7 +445,12 @@
           stock: form[4].value.trim(),
           supplier: form[5].value.trim(),
           status: form[6].value,
-          lastUpdated: form[7].value,
+          plantingDate: form[7].value,
+          harvestDate: form[8].value,
+          shelfLife: form[9].value.trim(),
+          storageTemp: form[10].value.trim(),
+          humidity: form[11].value.trim(),
+
         };
 
         if (!data.id || !data.name) {
@@ -271,7 +471,12 @@
           cells[4].textContent = data.stock;
           cells[5].innerHTML = statusLabel;
           cells[6].textContent = data.supplier;
-          cells[7].textContent = data.lastUpdated;
+          cells[7].textContent = data.plantingDate;
+          cells[8].textContent = data.harvestDate;
+          cells[9].textContent = data.shelfLife;
+          cells[10].textContent = data.storageTemp;
+          cells[11].textContent = data.humidity;
+
         } else {
           const newRow = document.createElement("tr");
           newRow.innerHTML = `
@@ -282,7 +487,11 @@
             <td>${data.stock}</td>
             <td>${statusLabel}</td>
             <td>${data.supplier}</td>
-            <td>${data.lastUpdated}</td>
+            <td>${data.plantingDate}</td>
+            <td>${data.harvestDate}</td>
+            <td>${data.shelfLife}</td>
+            <td>${data.storageTemp}</td>
+            <td>${data.humidity}</td>
             <td>
               <button onclick="editProduct(this)" style="padding:4px 8px;background:#ffc107;color:white;border:none;border-radius:4px;">Edit</button>
               <button onclick="deleteProduct(this)" style="padding:4px 8px;background:#dc3545;color:white;border:none;border-radius:4px;">Delete</button>
@@ -312,6 +521,175 @@
         }
       }
     }
+
+    //---documents page logic---
+    function initDocumentPage() {
+  const modal = document.getElementById("uploadModal");
+  const form = document.getElementById("uploadForm");
+  const tableBody = document.querySelector(".document-table tbody");
+  const typeFilter = document.getElementById("typeFilter");
+  const statusFilter = document.getElementById("statusFilter");
+  const searchInput = document.getElementById("searchInput");
+
+  const totalDocEl = document.getElementById("total-documents");
+  const pendingReviewEl = document.getElementById("pending-documents");
+  const complianceRateEl = document.getElementById("compliance-rate");
+  const expiringSoonEl = document.getElementById("expiring-documents");
+
+  const documents = [];
+
+  // Open/close modal
+  window.openUploadModal = () => {
+    modal.style.display = "block";
+    form.reset();
+  };
+
+  window.closeUploadModal = () => {
+    modal.style.display = "none";
+    form.reset();
+  };
+
+  modal.querySelector(".close-btn").onclick = closeUploadModal;
+  window.onclick = e => { if (e.target === modal) closeUploadModal(); };
+
+  // Add PDF file input (if not already present)
+  if (!form.querySelector("#pdfFile")) {
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.id = "pdfFile";
+    fileInput.accept = "application/pdf";
+    fileInput.required = true;
+    form.insertBefore(fileInput, form.querySelector("button[type='submit']"));
+  }
+
+  // Submit form
+  form.onsubmit = e => {
+    e.preventDefault();
+
+    const file = form.pdfFile.files[0];
+    if (!file || file.type !== "application/pdf") {
+      alert("Please upload a valid PDF file.");
+      return;
+    }
+
+    const doc = {
+      type: form.docType.value.trim(),
+      number: form.docNumber.value.trim(),
+      shipmentId: form.shipmentId.value.trim(),
+      productName: form.productName.value.trim(),
+      distribution: form.distribution.value.trim(),
+      issueDate: form.issueDate.value,
+      expiryDate: form.expiryDate.value,
+      fileSize: (file.size / 1024).toFixed(2), // KB with 2 decimals
+      file: file,
+      status: "Pending Review",
+      compliance: "Under Review"
+    };
+
+    documents.push(doc);
+    renderDocuments();
+    closeUploadModal();
+  };
+
+  function renderDocuments() {
+    const search = searchInput.value.toLowerCase();
+    const filterType = typeFilter.value.toLowerCase();
+    const filterStatus = statusFilter.value.toLowerCase();
+    const today = new Date();
+    const soonDate = new Date();
+    soonDate.setDate(today.getDate() + 7);
+
+    tableBody.innerHTML = "";
+    let compliantCount = 0;
+    let expiringSoonCount = 0;
+    let total = 0;
+    let pending = 0;
+
+    const uniqueTypes = new Set();
+    const uniqueStatuses = new Set();
+
+    documents.forEach((doc, index) => {
+      const matchesSearch = [doc.type, doc.number, doc.shipmentId, doc.productName, doc.distribution]
+        .some(val => val.toLowerCase().includes(search));
+      const matchesType = filterType === "" || doc.type.toLowerCase() === filterType;
+      const matchesStatus = filterStatus === "" || doc.status.toLowerCase() === filterStatus;
+
+      if (matchesSearch && matchesType && matchesStatus) {
+        const issueDateFormatted = new Date(doc.issueDate).toLocaleDateString();
+        const expiryDateFormatted = new Date(doc.expiryDate).toLocaleDateString();
+
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td><strong>${doc.type}</strong><br>${doc.number}</td>
+          <td>${doc.shipmentId}<br>${doc.productName}<br>${doc.distribution}</td>
+          <td>Issued: ${issueDateFormatted}<br>Expires: ${expiryDateFormatted}</td>
+          <td><span class="badge ${doc.status.toLowerCase().replace(/ /g, "-")}">${doc.status}</span></td>
+          <td><span class="badge ${doc.compliance.toLowerCase().replace(/ /g, "-")}">${doc.compliance}</span></td>
+          <td>${doc.fileSize} KB</td>
+          <td>
+            <button class="view-btn" onclick="alert('Preview not implemented')">👁️ View</button>
+            <button class="download-btn" onclick="downloadPDF(${index})">⬇️ Download</button>
+          </td>
+        `;
+        tableBody.appendChild(row);
+      }
+
+      total++;
+      if (doc.status === "Pending Review") pending++;
+      if (doc.compliance === "Compliant") compliantCount++;
+
+      const expDate = new Date(doc.expiryDate);
+      if (expDate <= soonDate) expiringSoonCount++;
+
+      uniqueTypes.add(doc.type);
+      uniqueStatuses.add(doc.status);
+    });
+
+    // Update stats
+    totalDocEl.textContent = total;
+    pendingReviewEl.textContent = pending;
+    complianceRateEl.textContent = total ? `${Math.round((compliantCount / total) * 100)}%` : "0%";
+    expiringSoonEl.textContent = expiringSoonCount;
+
+    // Update filter options dynamically
+    updateFilterOptions(typeFilter, uniqueTypes);
+    updateFilterOptions(statusFilter, uniqueStatuses);
+  }
+
+  function updateFilterOptions(select, items) {
+    const currentValues = new Set(Array.from(select.options).map(o => o.value));
+    items.forEach(item => {
+      if (!currentValues.has(item)) {
+        const option = document.createElement("option");
+        option.value = item;
+        option.textContent = item;
+        select.appendChild(option);
+      }
+    });
+  }
+
+  // Download PDF file
+  window.downloadPDF = index => {
+    const file = documents[index].file;
+    const url = URL.createObjectURL(file);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = file.name;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  // Filter event listeners
+  [searchInput, typeFilter, statusFilter].forEach(el =>
+    el.addEventListener("input", renderDocuments)
+  );
+
+  // Initial render
+  renderDocuments();
+}
+
+
+    
 
     // ---------- Warehouse Page Logic ----------
     function initWarehousePage() {
@@ -544,6 +922,8 @@
   updateCards();
 }
 loadContent('home');
+
+
 
 </script>
 </body>
