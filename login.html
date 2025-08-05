@@ -14,7 +14,6 @@
       <input type="text" id="username" placeholder="Username or Email" required />
       <input type="password" id="password" placeholder="Password" required />
 
-      <!-- Designation Dropdown -->
       <select id="designation" required>
         <option value="" disabled selected>Select Designation</option>
         <option value="warehouseManager">Warehouse Manager</option>
@@ -41,20 +40,25 @@
     const password = document.getElementById("password").value;
     const designation = document.getElementById("designation").value;
 
-    // Demo credentials
-    const demoCredentials = {
-      warehouseManager: { username: "warehouseManager", password: "1234", redirect: "dashboard.html" },
-      supplier: { username: "supplier", password: "1234", redirect: "supplierDashboard.html" },
-    };
-
-    const user = demoCredentials[designation];
-    
-    if (user && username === user.username && password === user.password) {
-      localStorage.setItem("loggedIn", "true");
-      window.location.href = user.redirect;
-    } else {
-      alert("Invalid credentials or designation. Please try again.");
-    }
+    fetch('login.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password, designation })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === "success") {
+        localStorage.setItem("loggedIn", "true");
+        localStorage.setItem("designation", designation);
+        window.location.href = data.redirect;
+      } else {
+        alert(data.message);
+      }
+    })
+    .catch(error => {
+      alert("Login failed. Try again.");
+      console.error(error);
+    });
   }
 </script>
 
