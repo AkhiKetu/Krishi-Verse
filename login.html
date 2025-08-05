@@ -50,6 +50,7 @@
       if (data.status === "success") {
         localStorage.setItem("loggedIn", "true");
         localStorage.setItem("designation", designation);
+        localStorage.setItem("username", data.username);
         window.location.href = data.redirect;
       } else {
         alert(data.message);

@@ -48,6 +48,7 @@ if ($result->num_rows === 1) {
         echo json_encode([
             'status' => 'success',
             'message' => 'Login successful!',
+            'username' => $user['username'],
             'redirect' => $redirectMap[$designation] ?? 'dashboard.html'
         ]);
     } else {

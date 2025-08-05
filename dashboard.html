@@ -21,7 +21,7 @@
       <h2 class="logo">Krishi-Verse</h2>
       <div class="user">
         <img src="panda.jpeg" alt="User" />
-        <p>Akhi Ketu<br><span>Warehouse-Manager</span></p>
+        <p id="displayUsername">Loading...<br><span id="displayRole">Role</span></p>
       </div>
       <nav>
         <ul>
@@ -60,6 +60,27 @@
   </div>
 
   <script>
+    
+    document.addEventListener("DOMContentLoaded", () => {
+    const username = localStorage.getItem("username") || "User";
+    const role = localStorage.getItem("designation") || "warehouseManager";
+
+    // Update DOM elements with the stored values
+    document.getElementById("displayUsername").innerHTML =
+      `${username}<br><span>${formatRole(role)}</span>`;
+  });
+
+  function formatRole(role) {
+    switch (role) {
+      case "warehouseManager": return "Warehouse-Manager";
+      case "supplier": return "Supplier";
+      case "transporter": return "Transporter";
+      case "distributor": return "Distributor";
+      case "retailer": return "Retailer";
+      default: return role;
+    }
+  }
+  
     // Redirect if not logged in
     function logout() {
       localStorage.removeItem("loggedIn");
