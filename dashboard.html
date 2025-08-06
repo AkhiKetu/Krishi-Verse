@@ -30,7 +30,6 @@
           <li><a href="#" data-page="warehouse"><i class="fas fa-warehouse"></i> Warehouse</a></li>
           <li><a href="#" data-page="documents"><i class="fas fa-file-alt"></i> Documents</a></li>
           <li><a href="#" data-page="consumers"><i class="fas fa-users"></i> Consumers</a></li>
-          <li><a href="#" data-page="weather"><i class="fas fa-cloud-sun"></i> Weather</a></li>
           <li><a href="#" data-page="transportation"><i class="fas fa-tools"></i> Transportation</a></li>
         </ul>
       </nav>
@@ -42,7 +41,7 @@
         <div class="header-right">
           <a href="#" class="notification-btn">Notification</a>
           <a href="#" class="message-btn">Message</a>
-          <div class="profile-dropdown">
+          <div class="profile-dropdown">    
             <a href="#" class="profile-btn" onclick="toggleDropdown(event)">Profile <i class="fas fa-caret-down"></i></a>
             <div id="dropdown-menu" class="dropdown-content">
               <a href="#">Edit Profile</a>
@@ -111,7 +110,7 @@
     });
 
     function loadContent(page) {
-      fetch(`${page}.html`)
+      fetch(`${page}.html?v=${new Date().getTime()}`)
         .then(res => res.text())
         .then(data => {
           contentArea.innerHTML = data;
@@ -194,6 +193,7 @@
     }
 
 // ---------- Transportation Page Logic ----------
+
 function initTransportationPage() {
   const modal = document.getElementById('scheduleModal');
   const scheduleBtn = document.querySelector('.schedule-btn');
@@ -204,7 +204,6 @@ function initTransportationPage() {
   const summaryScheduledToday = document.querySelector('.summary-cards .card:nth-child(1) .sub');
   const availableVehiclesCount = document.querySelector('.summary-cards .card:nth-child(2) .value');
 
-  // List of vehicles for availability calculation
   const vehicleList = ['RT-001', 'RT-002', 'DC-003', 'DC-004'];
 
   if (!modal || !scheduleBtn || !form || !tableBody) {
@@ -212,7 +211,6 @@ function initTransportationPage() {
     return;
   }
 
-  // Open modal when schedule button clicked
   scheduleBtn.onclick = () => {
     form.reset();
     modal.style.display = 'block';
@@ -220,23 +218,21 @@ function initTransportationPage() {
     form.editingRow = null;
   };
 
-  // Close modal when clicking outside modal content or on close button
   modal.addEventListener('click', (e) => {
     if (e.target === modal) {
       modal.style.display = 'none';
     }
   });
+
   const closeBtn = modal.querySelector('.close');
   closeBtn.onclick = () => {
     modal.style.display = 'none';
   };
 
-  // Cancel button inside modal
   form.querySelector('.cancel-btn').onclick = () => {
     modal.style.display = 'none';
   };
 
-  // Handle form submission (add/edit route)
   form.onsubmit = function (e) {
     e.preventDefault();
 
@@ -259,16 +255,16 @@ function initTransportationPage() {
       return;
     }
 
-    // Generate route ID or keep existing if editing
     const routeId = editing && editingRow ? editingRow.dataset.id : "TRP-" + Math.floor(Math.random() * 900 + 100);
 
-    // Compose table cells HTML
     const routeText = `${origin} → ${destination}<br><small>${product} (${weight})</small>`;
     const vehicleDriver = `🚛 ${vehicle}<br>👤 ${driver}`;
     const scheduleText = `${date}<br>${time}`;
-    const distance = `${Math.floor(Math.random() * 100 + 20)} km<br><small>ETA: ${Math.floor(Math.random() * 3 + 1)} hrs</small>`;
+    const distanceKm = Math.floor(Math.random() * 100 + 20);
+    const distance = `${distanceKm} km<br><small>ETA: ${Math.floor(Math.random() * 3 + 1)} hrs</small>`;
     const priorityTag = `<span class="priority ${priority.toLowerCase()}">${priority}</span>`;
     const statusTag = `<span class="status scheduled">Scheduled</span>`;
+    const cost = `${distanceKm * 15} BDT`;
 
     const rowHTML = `
       <td>${routeId}</td>
@@ -282,6 +278,7 @@ function initTransportationPage() {
         <button class="edit-btn">Edit</button>
         <button class="delete-btn">Delete</button>
       </td>
+      <td>${cost}</td>
     `;
 
     if (editing && editingRow) {
@@ -301,14 +298,12 @@ function initTransportationPage() {
     bindEditDeleteButtons();
   };
 
-  // Attach edit and delete event handlers to buttons in table
   function bindEditDeleteButtons() {
     tableBody.querySelectorAll('.edit-btn').forEach(btn => {
       btn.onclick = (e) => {
         const row = e.target.closest('tr');
         const cells = row.querySelectorAll('td');
 
-        // Parse the route & product cell's innerHTML
         const html = cells[1].innerHTML;
         const [routePart, productPart] = html.split('<br><small>');
         const [originText, destinationText] = routePart.split('→').map(s => s.trim());
@@ -318,7 +313,6 @@ function initTransportationPage() {
         form.setAttribute('data-editing', 'true');
         form.editingRow = row;
 
-        // Fill form fields
         form.origin.value = originText;
         form.destination.value = destinationText;
         form.product.value = productName;
@@ -344,7 +338,6 @@ function initTransportationPage() {
     });
   }
 
-  // Update summary cards at top
   function updateSummaryCards() {
     const rows = tableBody.querySelectorAll('tr');
     const today = new Date().toISOString().split('T')[0];
@@ -359,7 +352,6 @@ function initTransportationPage() {
     summaryScheduledToday.textContent = `${scheduledToday} scheduled for today`;
   }
 
-  // Update available vehicles count in summary
   function updateFleetStatus() {
     const usedVehicles = Array.from(tableBody.querySelectorAll('tr')).map(row =>
       row.cells[2].innerText.split('\n')[0].replace("🚛 ", "").trim()
@@ -368,13 +360,11 @@ function initTransportationPage() {
     availableVehiclesCount.textContent = available.length;
   }
 
-  // Initialize on load
   updateSummaryCards();
   updateFleetStatus();
   bindEditDeleteButtons();
 }
 
-// Initialize after DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
   initTransportationPage();
 });
