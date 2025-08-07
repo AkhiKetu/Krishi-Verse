@@ -1,219 +1,491 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Supplier Dashboard | Krishi-Verse</title>
-  <link rel="stylesheet" href="supplierDashboard.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
-  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-</head>
-<body>
-  <div class="container">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <h2 class="logo">Krishi-Verse</h2>
-      <div class="user">
-        <img src="supplier.png" alt="User" />
-        <p id="displayUsername">Loading...<br><span id="displayRole">Role</span></p>
-      </div>
-      <nav>
-        <ul>
-          <li><a href="#" data-page="supplier-home"><i class="fas fa-home"></i> Home</a></li>
-          <li><a href="#" data-page="supplier-crop"><i class="fas fa-seedling"></i> Crops</a></li>
-          <li><a href="#" data-page="supplier-inventory"><i class="fas fa-warehouse"></i> Inventory</a></li>
-          <li><a href="#" data-page="supplier-transport"><i class="fas fa-truck"></i> Transport</a></li>
-          <li><a href="#" data-page="supplier-market"><i class="fas fa-dollar-sign"></i> Market Prices</a></li>
-          <li><a href="#" data-page="weather"><i class="fas fa-cloud-sun"></i> Weather</a></li>
-        </ul>
-      </nav>
-    </aside>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Supplier Dashboard | Krishi-Verse</title>
+    <link rel="stylesheet" href="supplierDashboard.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <script
+      src="https://kit.fontawesome.com/a076d05399.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <h2 class="logo">Krishi-Verse</h2>
+        <div class="user">
+          <img src="supplier.png" alt="User" />
+          <p id="displayUsername">
+            Loading...<br /><span id="displayRole">Role</span>
+          </p>
+        </div>
+        <nav>
+          <ul>
+            <li>
+              <a href="#" data-page="supplier-home"
+                ><i class="fas fa-home"></i> Home</a
+              >
+            </li>
+            <li>
+              <a href="#" data-page="supplier-crop"
+                ><i class="fas fa-seedling"></i> Crops</a
+              >
+            </li>
+            <li>
+              <a href="#" data-page="supplier-inventory"
+                ><i class="fas fa-warehouse"></i> Inventory</a
+              >
+            </li>
+            <li>
+              <a href="#" data-page="transportation"
+                ><i class="fas fa-truck"></i> Transportation</a
+              >
+            </li>
+            <li>
+              <a href="#" data-page="supplier-market"
+                ><i class="fas fa-dollar-sign"></i> Market Prices</a
+              >
+            </li>
+            <li>
+              <a href="#" data-page="weather"
+                ><i class="fas fa-cloud-sun"></i> Weather</a
+              >
+            </li>
+          </ul>
+        </nav>
+      </aside>
 
-    <!-- Main Content -->
-    <div class="main">
-      <header>
-        <div class="header-right">
-          <a href="#" class="notification-btn">Notification</a>
-          <a href="#" class="message-btn">Messages</a>
-          <div class="profile-dropdown">
-            <a href="#" class="profile-btn" onclick="toggleDropdown(event)">Profile <i class="fas fa-caret-down"></i></a>
-            <div id="dropdown-menu" class="dropdown-content">
-              <a href="#">Edit Profile</a>
-              <a href="#">Settings</a>
+      <!-- Main Content -->
+      <div class="main">
+        <header>
+          <div class="header-right">
+            <a href="#" class="notification-btn">Notification</a>
+            <a href="#" class="message-btn">Messages</a>
+            <div class="profile-dropdown">
+              <a href="#" class="profile-btn" onclick="toggleDropdown(event)"
+                >Profile <i class="fas fa-caret-down"></i
+              ></a>
+              <div id="dropdown-menu" class="dropdown-content">
+                <a href="#">Edit Profile</a>
+                <a href="#">Settings</a>
+              </div>
             </div>
+            <a href="#" onclick="logout()" class="logout-btn">Logout</a>
           </div>
-          <a href="#" onclick="logout()" class="logout-btn">Logout</a>
-        </div>
-      </header>
+        </header>
 
-      <section class="content">
-        <!-- Dynamic content will be loaded here -->
-      </section>
+        <section class="content">
+          <!-- Dynamic content will be loaded here -->
+        </section>
+      </div>
     </div>
-  </div>
 
-  <!-- Crop Modal -->
-  <div id="cropModal" class="modal" style="display: none;">
-    <div class="modal-content">
-      <h3 id="modalTitle">Add Crop</h3>
-      <form id="cropForm">
-        <input type="text" id="cropName" placeholder="Crop Name" required />
-        <input type="text" id="cropType" placeholder="Crop Type" required />
-        <input type="number" id="cropQuantity" placeholder="Quantity (kg)" required />
-        <input type="text" id="cropStatus" placeholder="Status (e.g. Growing)" required />
-        <select id="cropSeason" required>
-          <option value="" disabled selected>Select Season</option>
-          <option value="summer">Summer</option>
-          <option value="winter">Winter</option>
-          <option value="monsoon">Monsoon</option>
-          <option value="full-year">Full Year</option>
-        </select>
-        <input type="date" id="cropDate" required />
-        <div class="modal-actions">
-          <button type="submit">Save</button>
-          <button type="button" onclick="closeCropModal()">Cancel</button>
-        </div>
-      </form>
+    <!-- Crop Modal -->
+    <div id="cropModal" class="modal" style="display: none">
+      <div class="modal-content">
+        <h3 id="modalTitle">Add Crop</h3>
+        <form id="cropForm">
+          <input type="text" id="cropName" placeholder="Crop Name" required />
+          <input type="text" id="cropType" placeholder="Crop Type" required />
+          <input
+            type="number"
+            id="cropQuantity"
+            placeholder="Quantity (kg)"
+            required
+          />
+          <input
+            type="text"
+            id="cropStatus"
+            placeholder="Status (e.g. Growing)"
+            required
+          />
+          <select id="cropSeason" required>
+            <option value="" disabled selected>Select Season</option>
+            <option value="summer">Summer</option>
+            <option value="winter">Winter</option>
+            <option value="monsoon">Monsoon</option>
+            <option value="full-year">Full Year</option>
+          </select>
+          <input type="date" id="cropDate" required />
+          <div class="modal-actions">
+            <button type="submit">Save</button>
+            <button type="button" onclick="closeCropModal()">Cancel</button>
+          </div>
+        </form>
+      </div>
     </div>
-  </div>
 
-  <script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const username = localStorage.getItem("username") || "User";
+        const role = localStorage.getItem("designation") || "supplier";
 
-    document.addEventListener("DOMContentLoaded", () => {
-    const username = localStorage.getItem("username") || "User";
-    const role = localStorage.getItem("designation") || "supplier";
-
-    document.getElementById("displayUsername").innerHTML =
-      `${username}<br><span>${formatRole(role)}</span>`;
-  });
-
-  function formatRole(role) {
-    switch (role) {
-      case "warehouseManager": return "Warehouse-Manager";
-      case "supplier": return "Supplier";
-      case "transporter": return "Transporter";
-      case "distributor": return "Distributor";
-      case "retailer": return "Retailer";
-      default: return role;
-    }
-  }
-  
-    if (localStorage.getItem("loggedIn") !== "true") {
-      window.location.href = "login.html";
-    }
-
-    function logout() {
-      localStorage.removeItem("loggedIn");
-      window.location.href = "index.html";
-    }
-
-    function toggleDropdown(e) {
-      e.preventDefault();
-      document.getElementById("dropdown-menu").classList.toggle("show");
-    }
-
-    window.addEventListener("click", function (e) {
-      if (!e.target.closest(".profile-dropdown")) {
-        document.getElementById("dropdown-menu").classList.remove("show");
-      }
-    });
-
-    const contentArea = document.querySelector(".content");
-
-    document.querySelectorAll("nav a").forEach(link => {
-      link.addEventListener("click", function (e) {
-        e.preventDefault();
-        loadContent(this.getAttribute("data-page"));
+        document.getElementById(
+          "displayUsername"
+        ).innerHTML = `${username}<br><span>${formatRole(role)}</span>`;
       });
-    });
 
-    function loadContent(page) {
-      fetch(`${page}.html`)
-        .then(res => res.text())
-        .then(html => {
-          contentArea.innerHTML = html;
-          if (page === "supplier-crop") {
-            setupCropPage();
-          }
-        })
-        .catch(() => contentArea.innerHTML = `<p>Error loading ${page}.</p>`);
-    }
-
-    const cropModal = document.getElementById("cropModal");
-    const cropForm = document.getElementById("cropForm");
-    let editingRow = null;
-
-    function openCropModal() {
-      editingRow = null;
-      cropForm.reset();
-      document.getElementById("modalTitle").textContent = "Add Crop";
-      cropModal.style.display = "flex";
-    }
-
-    function closeCropModal() {
-      cropModal.style.display = "none";
-    }
-
-    function setupCropPage() {
-      const cropTableBody = document.getElementById("cropTableBody");
-      const addCropBtn = document.getElementById("addCropBtn");
-      const seasonFilter = document.getElementById("seasonFilter");
-
-      if (!addCropBtn || !cropForm || !cropTableBody || !seasonFilter) {
-        console.warn("Required elements not found in crop page.");
-        return;
+      function formatRole(role) {
+        switch (role) {
+          case "warehouseManager":
+            return "Warehouse-Manager";
+          case "supplier":
+            return "Supplier";
+          case "transportation":
+            return "Transportation";
+          case "distributor":
+            return "Distributor";
+          case "retailer":
+            return "Retailer";
+          default:
+            return role;
+        }
       }
 
-      addCropBtn.onclick = openCropModal;
+      if (localStorage.getItem("loggedIn") !== "true") {
+        window.location.href = "login.html";
+      }
 
-      cropForm.onsubmit = function (e) {
+      function logout() {
+        localStorage.removeItem("loggedIn");
+        window.location.href = "index.html";
+      }
+
+      function toggleDropdown(e) {
         e.preventDefault();
+        document.getElementById("dropdown-menu").classList.toggle("show");
+      }
 
-        const seasonValue = document.getElementById("cropSeason").value;
-        const seasonLabel = {
-          "summer": "Summer",
-          "winter": "Winter",
-          "monsoon": "Monsoon",
-          "full-year": "Full Year"
-        }[seasonValue];
+      window.addEventListener("click", function (e) {
+        if (!e.target.closest(".profile-dropdown")) {
+          document.getElementById("dropdown-menu").classList.remove("show");
+        }
+      });
 
-        const crop = {
-          name: document.getElementById("cropName").value,
-          type: document.getElementById("cropType").value,
-          quantity: document.getElementById("cropQuantity").value,
-          status: document.getElementById("cropStatus").value,
-          date: document.getElementById("cropDate").value,
-          season: seasonLabel || "All",
-        };
+      const contentArea = document.querySelector(".content");
 
-        const newRow = renderCropRow(crop);
-        if (editingRow) {
-          editingRow.replaceWith(newRow);
-        } else {
-          cropTableBody.appendChild(newRow);
+      document.querySelectorAll("nav a").forEach((link) => {
+        link.addEventListener("click", function (e) {
+          e.preventDefault();
+          loadContent(this.getAttribute("data-page"));
+        });
+      });
+
+      function loadContent(page) {
+        fetch(`${page}.html`)
+          .then((res) => {
+            if (!res.ok) throw new Error("Network response was not ok");
+            return res.text();
+          })
+          .then((html) => {
+            document.querySelector(".content").innerHTML = html;
+            if (page === "transportation") {
+              initTransportationPage(); // Call the init function for transportation
+            } else if (page === "supplier-crop") {
+              setupCropPage();
+            }
+            // Add other pages as needed
+          })
+          .catch(() => {
+            document.querySelector(
+              ".content"
+            ).innerHTML = `<p>Error loading ${page}.</p>`;
+          });
+      }
+
+      // transportation.js
+
+      function initTransportationPage() {
+        const modal = document.getElementById("scheduleModal");
+        const scheduleBtn = document.querySelector(".schedule-btn");
+        const form = document.querySelector(".schedule-form");
+        const tableBody = document.querySelector(".transport-table tbody");
+
+        const summaryActiveRoutes = document.querySelector(
+          ".summary-cards .card:nth-child(1) .value"
+        );
+        const summaryScheduledToday = document.querySelector(
+          ".summary-cards .card:nth-child(1) .sub"
+        );
+        const availableVehiclesCount = document.querySelector(
+          ".summary-cards .card:nth-child(2) .value"
+        );
+
+        const vehicleList = ["RT-001", "RT-002", "DC-003", "DC-004"];
+
+        if (!modal || !scheduleBtn || !form || !tableBody) {
+          console.warn("Transportation page elements not found.");
+          return;
         }
 
-        closeCropModal();
-        filterTable(); // Refresh filter
-      };
+        scheduleBtn.onclick = () => {
+          form.reset();
+          modal.style.display = "block";
+          form.setAttribute("data-editing", "false");
+          form.editingRow = null;
+        };
 
-      function filterTable() {
-        const selected = seasonFilter.value;
-        const rows = cropTableBody.querySelectorAll("tr");
-        rows.forEach(row => {
-          const season = row.getAttribute("data-season");
-          row.style.display = (selected === "All" || season === selected) ? "" : "none";
+        modal.addEventListener("click", (e) => {
+          if (e.target === modal) {
+            modal.style.display = "none";
+          }
         });
+
+        modal.querySelector(".close").onclick = () => {
+          modal.style.display = "none";
+        };
+
+        form.querySelector(".cancel-btn").onclick = () => {
+          modal.style.display = "none";
+        };
+
+        form.onsubmit = function (e) {
+          e.preventDefault();
+
+          const editing = form.getAttribute("data-editing") === "true";
+          const editingRow = form.editingRow;
+
+          const origin = form.origin.value.trim();
+          const destination = form.destination.value.trim();
+          const product = form.product.value;
+          const weight = form.weight.value.trim();
+          const vehicle = form.vehicle.value;
+          const driver = form.driver.value;
+          const date = form.date.value;
+          const time = form.time.value;
+          const priority = form.priority.value;
+          const notes = form.notes.value.trim();
+
+          if (
+            !origin ||
+            !destination ||
+            !product ||
+            !weight ||
+            !vehicle ||
+            !driver ||
+            !date ||
+            !time ||
+            !priority
+          ) {
+            alert("Please fill in all required fields.");
+            return;
+          }
+
+          const routeId =
+            editing && editingRow
+              ? editingRow.dataset.id
+              : "TRP-" + Math.floor(Math.random() * 900 + 100);
+
+          const routeText = `${origin} → ${destination}<br><small>${product} (${weight})</small>`;
+          const vehicleDriver = `🚛 ${vehicle}<br>👤 ${driver}`;
+          const scheduleText = `${date}<br>${time}`;
+          const distanceKm = Math.floor(Math.random() * 100 + 20);
+          const distance = `${distanceKm} km<br><small>ETA: ${Math.floor(
+            Math.random() * 3 + 1
+          )} hrs</small>`;
+          const priorityTag = `<span class="priority ${priority.toLowerCase()}">${priority}</span>`;
+          const statusTag = `<span class="status scheduled">Scheduled</span>`;
+          const cost = `${distanceKm * 15} BDT`;
+
+          const rowHTML = `
+      <td>${routeId}</td>
+      <td>${routeText}</td>
+      <td>${vehicleDriver}</td>
+      <td>${scheduleText}</td>
+      <td>${distance}</td>
+      <td>${priorityTag}</td>
+      <td>${statusTag}</td>
+      <td>
+        <button class="edit-btn">Edit</button>
+        <button class="delete-btn">Delete</button>
+      </td>
+      <td>${cost}</td>
+    `;
+
+          if (editing && editingRow) {
+            editingRow.innerHTML = rowHTML;
+            editingRow.dataset.id = routeId;
+          } else {
+            const newRow = document.createElement("tr");
+            newRow.innerHTML = rowHTML;
+            newRow.dataset.id = routeId;
+            tableBody.appendChild(newRow);
+          }
+
+          modal.style.display = "none";
+          form.reset();
+          updateSummaryCards();
+          updateFleetStatus();
+          bindEditDeleteButtons();
+        };
+
+        function bindEditDeleteButtons() {
+          tableBody.querySelectorAll(".edit-btn").forEach((btn) => {
+            btn.onclick = (e) => {
+              const row = e.target.closest("tr");
+              const cells = row.querySelectorAll("td");
+
+              const html = cells[1].innerHTML;
+              const [routePart, productPart] = html.split("<br><small>");
+              const [originText, destinationText] = routePart
+                .split("→")
+                .map((s) => s.trim());
+              const productName = productPart
+                .replace(")</small>", "")
+                .split("(")[0]
+                .trim();
+              const weight = productPart.match(/\(([^)]+)\)/)[1];
+
+              form.setAttribute("data-editing", "true");
+              form.editingRow = row;
+
+              form.origin.value = originText;
+              form.destination.value = destinationText;
+              form.product.value = productName;
+              form.weight.value = weight;
+              form.vehicle.value = cells[2].innerText
+                .split("\n")[0]
+                .replace("🚛 ", "")
+                .trim();
+              form.driver.value = cells[2].innerText
+                .split("\n")[1]
+                .replace("👤 ", "")
+                .trim();
+              form.date.value = cells[3].innerText.split("\n")[0];
+              form.time.value = cells[3].innerText.split("\n")[1];
+              form.priority.value = cells[5].innerText.trim();
+
+              modal.style.display = "block";
+            };
+          });
+
+          tableBody.querySelectorAll(".delete-btn").forEach((btn) => {
+            btn.onclick = (e) => {
+              if (confirm("Are you sure you want to delete this route?")) {
+                e.target.closest("tr").remove();
+                updateSummaryCards();
+                updateFleetStatus();
+              }
+            };
+          });
+        }
+
+        function updateSummaryCards() {
+          const rows = tableBody.querySelectorAll("tr");
+          const today = new Date().toISOString().split("T")[0];
+          let scheduledToday = 0;
+
+          rows.forEach((row) => {
+            const scheduleDate = row.cells[3].innerText.split("\n")[0];
+            if (scheduleDate === today) scheduledToday++;
+          });
+
+          summaryActiveRoutes.textContent = rows.length;
+          summaryScheduledToday.textContent = `${scheduledToday} scheduled for today`;
+        }
+
+        function updateFleetStatus() {
+          const usedVehicles = Array.from(tableBody.querySelectorAll("tr")).map(
+            (row) =>
+              row.cells[2].innerText.split("\n")[0].replace("🚛 ", "").trim()
+          );
+          const available = vehicleList.filter(
+            (v) => !usedVehicles.includes(v)
+          );
+          availableVehiclesCount.textContent = available.length;
+        }
+
+        updateSummaryCards();
+        updateFleetStatus();
+        bindEditDeleteButtons();
       }
 
-      seasonFilter.addEventListener("change", filterTable);
-      filterTable(); // Initial call
-    }
+      document.addEventListener("DOMContentLoaded", () => {
+        initTransportationPage();
+      });
 
-    function renderCropRow(crop) {
-      const row = document.createElement("tr");
-      row.setAttribute("data-season", crop.season);
-      row.innerHTML = `
+      const cropModal = document.getElementById("cropModal");
+      const cropForm = document.getElementById("cropForm");
+      let editingRow = null;
+
+      function openCropModal() {
+        editingRow = null;
+        cropForm.reset();
+        document.getElementById("modalTitle").textContent = "Add Crop";
+        cropModal.style.display = "flex";
+      }
+
+      function closeCropModal() {
+        cropModal.style.display = "none";
+      }
+
+      function setupCropPage() {
+        const cropTableBody = document.getElementById("cropTableBody");
+        const addCropBtn = document.getElementById("addCropBtn");
+        const seasonFilter = document.getElementById("seasonFilter");
+
+        if (!addCropBtn || !cropForm || !cropTableBody || !seasonFilter) {
+          console.warn("Required elements not found in crop page.");
+          return;
+        }
+
+        addCropBtn.onclick = openCropModal;
+
+        cropForm.onsubmit = function (e) {
+          e.preventDefault();
+
+          const seasonValue = document.getElementById("cropSeason").value;
+          const seasonLabel = {
+            summer: "Summer",
+            winter: "Winter",
+            monsoon: "Monsoon",
+            "full-year": "Full Year",
+          }[seasonValue];
+
+          const crop = {
+            name: document.getElementById("cropName").value,
+            type: document.getElementById("cropType").value,
+            quantity: document.getElementById("cropQuantity").value,
+            status: document.getElementById("cropStatus").value,
+            date: document.getElementById("cropDate").value,
+            season: seasonLabel || "All",
+          };
+
+          const newRow = renderCropRow(crop);
+          if (editingRow) {
+            editingRow.replaceWith(newRow);
+          } else {
+            cropTableBody.appendChild(newRow);
+          }
+
+          closeCropModal();
+          filterTable(); // Refresh filter
+        };
+
+        function filterTable() {
+          const selected = seasonFilter.value;
+          const rows = cropTableBody.querySelectorAll("tr");
+          rows.forEach((row) => {
+            const season = row.getAttribute("data-season");
+            row.style.display =
+              selected === "All" || season === selected ? "" : "none";
+          });
+        }
+
+        seasonFilter.addEventListener("change", filterTable);
+        filterTable(); // Initial call
+      }
+
+      function renderCropRow(crop) {
+        const row = document.createElement("tr");
+        row.setAttribute("data-season", crop.season);
+        row.innerHTML = `
         <td>${crop.name}</td>
         <td>${crop.type}</td>
         <td>${crop.quantity}</td>
@@ -225,37 +497,40 @@
           <button onclick="deleteCrop(this)" class="delete-btn">Delete</button>
         </td>
       `;
-      return row;
-    }
+        return row;
+      }
 
-    function editCrop(button) {
-      const row = button.closest("tr");
-      editingRow = row;
-      document.getElementById("modalTitle").textContent = "Edit Crop";
-      document.getElementById("cropName").value = row.cells[0].textContent;
-      document.getElementById("cropType").value = row.cells[1].textContent;
-      document.getElementById("cropQuantity").value = row.cells[2].textContent;
-      document.getElementById("cropStatus").value = row.cells[3].textContent;
-      document.getElementById("cropDate").value = row.cells[4].textContent;
-      const season = row.cells[5].textContent.toLowerCase().replace(" ", "-");
-      document.getElementById("cropSeason").value = season;
-      cropModal.style.display = "flex";
-    }
-
-    function deleteCrop(button) {
-      if (confirm("Are you sure you want to delete this crop?")) {
+      function editCrop(button) {
         const row = button.closest("tr");
-        row.remove();
+        editingRow = row;
+        document.getElementById("modalTitle").textContent = "Edit Crop";
+        document.getElementById("cropName").value = row.cells[0].textContent;
+        document.getElementById("cropType").value = row.cells[1].textContent;
+        document.getElementById("cropQuantity").value =
+          row.cells[2].textContent;
+        document.getElementById("cropStatus").value = row.cells[3].textContent;
+        document.getElementById("cropDate").value = row.cells[4].textContent;
+        const season = row.cells[5].textContent.toLowerCase().replace(" ", "-");
+        document.getElementById("cropSeason").value = season;
+        cropModal.style.display = "flex";
       }
-    }
 
-    window.addEventListener("click", function (e) {
-      if (e.target === cropModal) {
-        closeCropModal();
+      function deleteCrop(button) {
+        if (confirm("Are you sure you want to delete this crop?")) {
+          const row = button.closest("tr");
+          row.remove();
+        }
       }
-    });
 
-    window.addEventListener("DOMContentLoaded", () => loadContent("supplier-home"));
-  </script>
-</body>
+      window.addEventListener("click", function (e) {
+        if (e.target === cropModal) {
+          closeCropModal();
+        }
+      });
+
+      window.addEventListener("DOMContentLoaded", () =>
+        loadContent("supplier-home")
+      );
+    </script>
+  </body>
 </html>
