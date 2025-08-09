@@ -5,7 +5,7 @@
 <div class="actions-bar">
   <input id="searchInput" type="text" placeholder="Search products..." />
   <select id="categoryFilter">
-    <option>Filter by category</option>
+    <option value="">Filter by category</option>
     <option value="Vegetables">Vegetables</option>
     <option value="Seeds">Seeds</option>
   </select>
@@ -15,14 +15,14 @@
 <!-- Product Table -->
 <div class="table-container">
   <h3>Product Inventory</h3>
-  <table>
+  <table id="productTable">
     <thead>
       <tr>
         <th>Product ID</th>
         <th>Name</th>
         <th>Category</th>
         <th>Price</th>
-        <th>Stock</th>
+        <th>Packaging</th>
         <th>Status</th>
         <th>Supplier</th>
         <th>Planting Date</th>
@@ -33,43 +33,8 @@
         <th>Actions</th>
       </tr>
     </thead>
-    <tbody>
-      <tr>
-        <td>P001</td>
-        <td>Organic Tomatoes</td>
-        <td>Vegetables</td>
-        <td>$3.50/kg</td>
-        <td>450</td>
-        <td><span class="status in-stock">In Stock</span></td>
-        <td>Green Farm Co.</td>
-        <td>2023-11-01</td>
-        <td>2024-01-25</td>
-        <td>10 days</td>
-        <td>8°C</td>
-        <td>85%</td>
-        <td>
-          <button class="edit-btn" onclick="editProduct(this)">Edit</button>
-          <button class="delete-btn" onclick="deleteProduct(this)">Delete</button>
-        </td>
-      </tr>
-      <tr>
-        <td>P002</td>
-        <td>Sunflower Seeds</td>
-        <td>Seeds</td>
-        <td>$1.20/pack</td>
-        <td>1200</td>
-        <td><span class="status in-stock">In Stock</span></td>
-        <td>Seed World Ltd.</td>
-        <td>2023-10-15</td>
-        <td>2024-02-10</td>
-        <td>6 months</td>
-        <td>Room Temp</td>
-        <td>60%</td>
-        <td>
-          <button class="edit-btn" onclick="editProduct(this)">Edit</button>
-          <button class="delete-btn" onclick="deleteProduct(this)">Delete</button>
-        </td>
-      </tr>
+    <tbody id="productTableBody">
+      <!-- Dynamic product rows will load here -->
     </tbody>
   </table>
 </div>
@@ -80,21 +45,46 @@
     <span id="closeModal" class="close">&times;</span>
     <h3>Add/Edit Product</h3>
     <form id="addProductForm">
-      <input type="text" placeholder="Product ID" required />
-      <input type="text" placeholder="Name" required />
+      <input
+        id="productID"
+        name="productID"
+        type="text"
+        placeholder="Product ID"
+        required
+      />
+      <input
+        id="productName"
+        name="productName"
+        type="text"
+        placeholder="Name"
+        required
+      />
 
       <!-- Category Dropdown -->
-      <select required>
+      <select id="category" name="category" required>
         <option value="" disabled selected>Select Category</option>
         <option value="Vegetables">Vegetables</option>
         <option value="Seeds">Seeds</option>
+        <option value="Fruits">Fruits</option>
       </select>
 
-      <input type="text" placeholder="Price" required />
-      <input type="number" placeholder="Stock" required />
-      <input type="text" placeholder="Supplier" required />
+      <input id="price" name="price" type="text" placeholder="Price" required />
+      <input
+        id="packaging"
+        name="packaging"
+        type="text"
+        placeholder="Packaging  (e.g. 5 Kg Crates)"
+        required
+      />
+      <input
+        id="supplier"
+        name="supplier"
+        type="text"
+        placeholder="Supplier"
+        required
+      />
 
-      <select required>
+      <select id="status" name="status" required>
         <option value="" disabled selected>Select Status</option>
         <option value="in-stock">In Stock</option>
         <option value="stock-out">Stock Out</option>
@@ -102,17 +92,35 @@
 
       <div class="form-group">
         <label for="plantingDate">Planting Date</label>
-        <input type="date" id="plantingDate" name="plantingDate" required />
+        <input id="plantingDate" name="plantingDate" type="date" required />
       </div>
 
       <div class="form-group">
         <label for="harvestDate">Expected Harvesting Date</label>
-        <input type="date" id="harvestDate" name="harvestDate" required />
+        <input id="harvestDate" name="harvestDate" type="date" required />
       </div>
 
-      <input type="text" placeholder="Shelf Life (e.g. 10 days)" required />
-      <input type="text" placeholder="Storage Temperature (e.g. 8°C)" required />
-      <input type="text" placeholder="Humidity (e.g. 85%)" required />
+      <input
+        id="shelfLife"
+        name="shelfLife"
+        type="text"
+        placeholder="Shelf Life (e.g. 10 days)"
+        required
+      />
+      <input
+        id="storageTemp"
+        name="storageTemp"
+        type="text"
+        placeholder="Storage Temperature (e.g. 8°C)"
+        required
+      />
+      <input
+        id="humidity"
+        name="humidity"
+        type="text"
+        placeholder="Humidity (e.g. 85%)"
+        required
+      />
 
       <button type="submit">Save Product</button>
     </form>
