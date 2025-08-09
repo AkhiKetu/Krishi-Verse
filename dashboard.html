@@ -265,6 +265,7 @@
           return;
         }
 
+        // Open modal to add new transport
         scheduleBtn.onclick = () => {
           form.reset();
           modal.style.display = "block";
@@ -272,21 +273,24 @@
           form.editingRow = null;
         };
 
+        // Close modal if clicked outside content
         modal.addEventListener("click", (e) => {
           if (e.target === modal) {
             modal.style.display = "none";
           }
         });
 
-        const closeBtn = modal.querySelector(".close");
-        closeBtn.onclick = () => {
+        // Close modal on (x) click
+        modal.querySelector(".close").onclick = () => {
           modal.style.display = "none";
         };
 
+        // Close modal on cancel button
         form.querySelector(".cancel-btn").onclick = () => {
           modal.style.display = "none";
         };
 
+        // Handle form submit (Add/Edit)
         form.onsubmit = function (e) {
           e.preventDefault();
 
@@ -302,7 +306,9 @@
           const date = form.date.value;
           const time = form.time.value;
           const priority = form.priority.value;
-          const notes = form.notes.value.trim();
+          const temperature = form.temperature.value;
+          const humidity = form.humidity.value;
+          const distanceKm = parseFloat(form.distance.value) || 0;
 
           if (
             !origin ||
@@ -313,7 +319,9 @@
             !driver ||
             !date ||
             !time ||
-            !priority
+            !priority ||
+            !temperature ||
+            !humidity
           ) {
             alert("Please fill in all required fields.");
             return;
@@ -327,13 +335,12 @@
           const routeText = `${origin} → ${destination}<br><small>${product} (${weight})</small>`;
           const vehicleDriver = `🚛 ${vehicle}<br>👤 ${driver}`;
           const scheduleText = `${date}<br>${time}`;
-          const distanceKm = Math.floor(Math.random() * 100 + 20);
           const distance = `${distanceKm} km<br><small>ETA: ${Math.floor(
             Math.random() * 3 + 1
           )} hrs</small>`;
           const priorityTag = `<span class="priority ${priority.toLowerCase()}">${priority}</span>`;
           const statusTag = `<span class="status scheduled">Scheduled</span>`;
-          const cost = `${distanceKm * 15} BDT`;
+          const cost = `${(distanceKm * 15).toFixed(2)} BDT`;
 
           const rowHTML = `
       <td>${routeId}</td>
@@ -343,11 +350,13 @@
       <td>${distance}</td>
       <td>${priorityTag}</td>
       <td>${statusTag}</td>
+      <td>${cost}</td>
+      <td>${temperature}</td>
+      <td>${humidity}</td>
       <td>
         <button class="edit-btn">Edit</button>
         <button class="delete-btn">Delete</button>
       </td>
-      <td>${cost}</td>
     `;
 
           if (editing && editingRow) {
@@ -367,6 +376,7 @@
           bindEditDeleteButtons();
         };
 
+        // Bind Edit and Delete buttons on all rows
         function bindEditDeleteButtons() {
           tableBody.querySelectorAll(".edit-btn").forEach((btn) => {
             btn.onclick = (e) => {
@@ -402,6 +412,9 @@
               form.date.value = cells[3].innerText.split("\n")[0];
               form.time.value = cells[3].innerText.split("\n")[1];
               form.priority.value = cells[5].innerText.trim();
+              form.distance.value = parseFloat(cells[4].innerText) || "";
+              form.temperature.value = cells[8].innerText;
+              form.humidity.value = cells[9].innerText;
 
               modal.style.display = "block";
             };
@@ -418,6 +431,7 @@
           });
         }
 
+        // Update summary cards info
         function updateSummaryCards() {
           const rows = tableBody.querySelectorAll("tr");
           const today = new Date().toISOString().split("T")[0];
@@ -432,6 +446,7 @@
           summaryScheduledToday.textContent = `${scheduledToday} scheduled for today`;
         }
 
+        // Update available vehicles count
         function updateFleetStatus() {
           const usedVehicles = Array.from(tableBody.querySelectorAll("tr")).map(
             (row) =>
@@ -443,11 +458,13 @@
           availableVehiclesCount.textContent = available.length;
         }
 
+        // Initial setup
         updateSummaryCards();
         updateFleetStatus();
         bindEditDeleteButtons();
       }
 
+      // Initialize after DOM loads
       document.addEventListener("DOMContentLoaded", () => {
         initTransportationPage();
       });
@@ -473,7 +490,7 @@
         form.elements["category"].value = cells[2].textContent;
         form.elements["price"].value = cells[3].textContent;
         form.elements["packaging"].value = cells[4].textContent;
-        form.elements["supplier"].value = cells[6].textContent;
+        form.elements["location"].value = cells[6].textContent;
 
         const statusSpan = cells[5].querySelector("span");
         form.elements["status"].value =
@@ -576,7 +593,7 @@
             category: form.elements["category"].value.trim(),
             price: form.elements["price"].value.trim(),
             packaging: form.elements["packaging"].value.trim(),
-            supplier: form.elements["supplier"].value.trim(),
+            location: form.elements["location"].value.trim(),
             status: form.elements["status"].value,
             plantingDate: form.elements["plantingDate"].value,
             harvestDate: form.elements["harvestDate"].value,
@@ -611,7 +628,7 @@
                     data.status === "in-stock"
                       ? `<span style="background-color: #d4edda; color: #155724; padding: 4px 8px; border-radius: 15px; font-size: 12px;">In Stock</span>`
                       : `<span style="background-color: #f8d7da; color: #721c24; padding: 4px 8px; border-radius: 15px; font-size: 12px;">Stock Out</span>`;
-                  cells[6].textContent = data.supplier;
+                  cells[6].textContent = data.location;
                   cells[7].textContent = data.plantingDate;
                   cells[8].textContent = data.harvestDate;
                   cells[9].textContent = data.shelfLife;
@@ -631,7 +648,7 @@
             <td>${data.price}</td>
             <td>${data.packaging}</td>
             <td>${statusLabel}</td>
-            <td>${data.supplier}</td>
+            <td>${data.location}</td>
             <td>${data.plantingDate}</td>
             <td>${data.harvestDate}</td>
             <td>${data.shelfLife}</td>
@@ -694,7 +711,7 @@
             <td>${p.price}</td>
             <td>${p.packaging}</td>
             <td>${statusLabel}</td>
-            <td>${p.supplier}</td>
+            <td>${p.location}</td>
             <td>${p.plantingDate}</td>
             <td>${p.harvestDate}</td>
             <td>${p.shelfLife}</td>

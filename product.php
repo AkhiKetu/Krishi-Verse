@@ -55,7 +55,7 @@ try {
                     category = :category,
                     price = :price,
                     packaging = :packaging,
-                    supplier = :supplier,
+                    location = :location,
                     status = :status,
                     plantingDate = :plantingDate,
                     harvestDate = :harvestDate,
@@ -71,7 +71,7 @@ try {
                     ':category' => $data['category'],
                     ':price' => $data['price'],
                     ':packaging' => $data['packaging'],
-                    ':supplier' => $data['supplier'],
+                    ':location' => $data['location'],
                     ':status' => $data['status'],
                     ':plantingDate' => $data['plantingDate'],
                     ':harvestDate' => $data['harvestDate'],
@@ -84,11 +84,11 @@ try {
                 // Insert new
                 $sql = "INSERT INTO products (
                     productID, productName, category, price, packaging,
-                    supplier, status, plantingDate, harvestDate,
+                    location, status, plantingDate, harvestDate,
                     shelfLife, storageTemp, humidity
                 ) VALUES (
                     :productID, :productName, :category, :price, :packaging,
-                    :supplier, :status, :plantingDate, :harvestDate,
+                    :location, :status, :plantingDate, :harvestDate,
                     :shelfLife, :storageTemp, :humidity
                 )";
                 $stmt = $pdo->prepare($sql);
@@ -98,7 +98,7 @@ try {
                     ':category' => $data['category'],
                     ':price' => $data['price'],
                     ':packaging' => $data['packaging'],
-                    ':supplier' => $data['supplier'],
+                    ':location' => $data['location'],
                     ':status' => $data['status'],
                     ':plantingDate' => $data['plantingDate'],
                     ':harvestDate' => $data['harvestDate'],

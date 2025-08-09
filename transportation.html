@@ -39,8 +39,10 @@
       <th>Distance & Time</th>
       <th>Priority</th>
       <th>Status</th>
-      <th>Actions</th>
       <th>Costing</th>
+      <th>Temperature</th>
+      <th>Humidity</th>
+      <th>Action</th>
       </tr>
   </thead>
   <tbody>
@@ -83,6 +85,9 @@
         </select>
         <input name="weight" type="text" placeholder="e.g., 2500 kg" required />
         <input name="distance" type="number" placeholder="Distance in km" required />
+        <input type="text" name="temperature" placeholder="Temperature (°C)" required />
+        <input type="text" name="humidity" placeholder="Humidity (%)" required />
+
       </div>
 
       <div class="form-group">
@@ -111,8 +116,6 @@
           <option>Low</option>
         </select>
       </div>
-
-      <textarea name="notes" placeholder="Any special handling or delivery instructions..."></textarea>
 
       <div class="modal-actions">
         <button type="button" class="cancel-btn">Cancel</button>
