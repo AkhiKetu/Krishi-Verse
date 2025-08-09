@@ -193,7 +193,7 @@
                   labels: productNames,
                   datasets: [
                     {
-                      label: "Price (USD/kg)",
+                      label: "Price (Bdt/kg)",
                       data: productPrices,
                       backgroundColor: [
                         "#5B5EA6",
@@ -215,7 +215,7 @@
                       beginAtZero: true,
                       title: {
                         display: true,
-                        text: "Price (USD/kg)",
+                        text: "Price (Bdt/kg)",
                       },
                     },
                   },
@@ -917,115 +917,83 @@
 
       // ---------- Warehouse Page Logic ----------
       function initWarehousePage() {
-        const addBtn = document.getElementById("addWarehouseBtn");
         const modal = document.getElementById("addWarehouseModal");
+        const openBtn = document.getElementById("addWarehouseBtn");
         const closeBtn = document.getElementById("closeWarehouseModal");
         const form = document.getElementById("warehouseForm");
-        const tableBody = document.getElementById("warehouseTableBody");
         const searchInput = document.getElementById("searchWarehouse");
+        const tableBody = document.getElementById("warehouseTableBody");
 
-        const totalWarehousesEl = document.getElementById("totalWarehouses");
-        const totalCapacityEl = document.getElementById("totalCapacity");
-        const occupiedSpaceEl = document.getElementById("occupiedSpace");
-        const avgUtilizationEl = document.getElementById("avgUtilization");
+        function loadWarehouses() {
+          fetch("warehouse.php")
+            .then((res) => res.json())
+            .then((data) => {
+              tableBody.innerHTML = "";
+              let totalCapacity = 0;
 
-        if (
-          !addBtn ||
-          !modal ||
-          !closeBtn ||
-          !form ||
-          !tableBody ||
-          !searchInput
-        )
-          return;
+              data.forEach((wh) => {
+                // Ensure capacity is a valid number
+                let capacityNum = parseInt(wh.capacity);
+                if (isNaN(capacityNum)) capacityNum = 0;
+                totalCapacity += capacityNum;
 
-        let warehouseData = [];
+                const row = `<tr>
+            <td>${wh.name}</td>
+            <td>${wh.location}</td>
+            <td>${capacityNum} kg</td>
+            <td>${wh.manager}</td>
+            <td>${wh.type}</td>
+          </tr>`;
+                tableBody.innerHTML += row;
+              });
 
-        addBtn.onclick = () => {
-          form.reset();
-          modal.style.display = "block";
-        };
+              document.getElementById("totalWarehouses").textContent =
+                data.length;
+              document.getElementById("totalCapacity").textContent =
+                totalCapacity + " kg";
 
-        closeBtn.onclick = () => {
-          modal.style.display = "none";
-        };
-
-        window.onclick = (e) => {
-          if (e.target === modal) {
-            modal.style.display = "none";
-          }
-        };
-
-        form.onsubmit = (e) => {
-          e.preventDefault();
-
-          const name = form.name.value.trim();
-          const location = form.location.value.trim();
-          const capacity = parseInt(form.capacity.value.trim(), 10);
-          const manager = form.manager.value.trim();
-          const type = form.type.value;
-
-          if (!name || !location || !capacity || !manager || !type) {
-            alert("Please fill all fields correctly.");
-            return;
-          }
-          if (capacity <= 0 || isNaN(capacity)) {
-            alert("Capacity must be a positive number.");
-            return;
-          }
-
-          warehouseData.push({ name, location, capacity, manager, type });
-          updateTable();
-          updateSummary();
-          modal.style.display = "none";
-        };
-
-        searchInput.oninput = () => {
-          updateTable(searchInput.value.toLowerCase());
-        };
-
-        function updateTable(filter = "") {
-          tableBody.innerHTML = "";
-          warehouseData
-            .filter(
-              (w) =>
-                w.name.toLowerCase().includes(filter) ||
-                w.location.toLowerCase().includes(filter) ||
-                w.manager.toLowerCase().includes(filter) ||
-                w.type.toLowerCase().includes(filter)
-            )
-            .forEach((w) => {
-              const tr = document.createElement("tr");
-              tr.innerHTML = `
-              <td>${w.name}</td>
-              <td>${w.location}</td>
-              <td>${w.capacity} kg</td>
-              <td>${w.manager}</td>
-              <td>${w.type}</td>
-            `;
-              tableBody.appendChild(tr);
+              // For example, occupied space is 60% of total capacity (you can adjust this logic)
+              const occupiedSpace = Math.floor(totalCapacity * 0.6);
+              document.getElementById("occupiedSpace").textContent =
+                occupiedSpace + " kg";
             });
         }
 
-        function updateSummary() {
-          const total = warehouseData.length;
-          const totalCap = warehouseData.reduce(
-            (sum, w) => sum + w.capacity,
-            0
-          );
-          const occupied = Math.floor(totalCap * 0.7); // example occupancy
-          const utilization = totalCap
-            ? Math.round((occupied / totalCap) * 100)
-            : 0;
+        openBtn.onclick = () => (modal.style.display = "block");
+        closeBtn.onclick = () => (modal.style.display = "none");
+        window.onclick = (e) => {
+          if (e.target == modal) modal.style.display = "none";
+        };
 
-          totalWarehousesEl.textContent = total;
-          totalCapacityEl.textContent = `${totalCap} kg`;
-          occupiedSpaceEl.textContent = `${occupied} kg`;
-          avgUtilizationEl.textContent = `${utilization}%`;
-        }
+        form.addEventListener("submit", function (e) {
+          e.preventDefault();
+          const formData = new FormData(form);
+          fetch("warehouse.php", {
+            method: "POST",
+            body: formData,
+          })
+            .then((res) => res.json())
+            .then((response) => {
+              if (response.success) {
+                modal.style.display = "none";
+                form.reset();
+                loadWarehouses();
+              } else {
+                alert(response.error || "Failed to add warehouse");
+              }
+            });
+        });
 
-        updateTable();
-        updateSummary();
+        searchInput.addEventListener("keyup", function () {
+          const filter = searchInput.value.toLowerCase();
+          const rows = tableBody.getElementsByTagName("tr");
+          for (let i = 0; i < rows.length; i++) {
+            const text = rows[i].textContent.toLowerCase();
+            rows[i].style.display = text.includes(filter) ? "" : "none";
+          }
+        });
+
+        loadWarehouses();
       }
 
       // ---------- Consumer Page Logic ----------
