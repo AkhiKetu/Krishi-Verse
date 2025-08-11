@@ -4,10 +4,22 @@
 
 <!-- Stats Cards -->
 <div class="stats-cards">
-  <div class="card"><h4>Total Documents</h4><h2 id="total-documents">0</h2></div>
-  <div class="card"><h4>Pending Review</h4><h2 id="pending-documents">0</h2></div>
-  <div class="card"><h4>Compliance Rate</h4><h2 id="compliance-rate">0%</h2></div>
-  <div class="card"><h4>Expiring Soon</h4><h2 id="expiring-documents">0</h2></div>
+  <div class="card">
+    <h4>Total Documents</h4>
+    <h2 id="total-documents">0</h2>
+  </div>
+  <div class="card">
+    <h4>Pending Review</h4>
+    <h2 id="pending-documents">0</h2>
+  </div>
+  <div class="card">
+    <h4>Compliance Rate</h4>
+    <h2 id="compliance-rate">0%</h2>
+  </div>
+  <div class="card">
+    <h4>Expiring Soon</h4>
+    <h2 id="expiring-documents">0</h2>
+  </div>
 </div>
 
 <!-- Filter Controls -->
@@ -23,6 +35,7 @@
     <option value="Pending Review">Pending Review</option>
     <option value="Approved">Approved</option>
     <option value="Rejected">Rejected</option>
+    <option value="Reviewed">Reviewed</option>
   </select>
 </div>
 
@@ -41,13 +54,43 @@
       </tr>
     </thead>
     <tbody id="documentBody">
-      <!-- Dynamic rows -->
+      <!-- Sample dynamic rows for demo -->
+      <tr data-status="Pending Review" data-compliance="No" data-type="Invoice">
+        <td>Invoice #12345</td>
+        <td>Shipment #001</td>
+        <td>2025-08-01 to 2025-09-01</td>
+        <td class="status-cell">Pending Review</td>
+        <td class="compliance-cell">No</td>
+        <td>1.2 MB</td>
+        <td>
+          <button class="view-btn">View</button>
+          <button class="download-btn">Download</button>
+          <button class="review-btn">Mark Reviewed</button>
+        </td>
+      </tr>
+      <tr
+        data-status="Approved"
+        data-compliance="Yes"
+        data-type="Bill of Lading"
+      >
+        <td>Bill of Lading #7890</td>
+        <td>Shipment #002</td>
+        <td>2025-07-15 to 2025-08-15</td>
+        <td class="status-cell">Approved</td>
+        <td class="compliance-cell">Yes</td>
+        <td>800 KB</td>
+        <td>
+          <button class="view-btn">View</button>
+          <button class="download-btn">Download</button>
+          <button class="review-btn">Mark Reviewed</button>
+        </td>
+      </tr>
     </tbody>
   </table>
 </div>
 
 <!-- Upload Modal -->
-<div id="uploadModal" class="modal">
+<div id="uploadModal" class="modal" style="display: none">
   <div class="modal-content">
     <span class="close-btn" onclick="closeUploadModal()">&times;</span>
     <h3>Upload Document</h3>

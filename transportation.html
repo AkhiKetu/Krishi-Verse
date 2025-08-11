@@ -26,6 +26,23 @@
   </div>
 </div>
 
+<!-- Search bar for table -->
+<div class="search-container">
+  <!-- GPS Button -->
+  <button id="gpsButton">Map</button>
+  <input
+    type="text"
+    id="transportSearch"
+    placeholder="Search transportation records..."
+  />
+</div>
+<!-- GPS Map container, initially hidden -->
+<div
+  id="mapContainer"
+  style="display: none; height: 400px; width: 100%; margin-top: 20px"
+>
+  <div id="transportMap" style="height: 100%; width: 100%"></div>
+</div>
 <!-- Transportation Schedule Table -->
 <h3>Transportation Schedule</h3>
 <p>Planned and active transportation routes</p>
@@ -43,7 +60,7 @@
       <th>Temperature</th>
       <th>Humidity</th>
       <th>Action</th>
-      </tr>
+    </tr>
   </thead>
   <tbody>
     <!-- Rows will be dynamically added here -->
@@ -51,7 +68,13 @@
 </table>
 
 <!-- Schedule Transport Modal -->
-<div id="scheduleModal" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
+<div
+  id="scheduleModal"
+  class="modal"
+  tabindex="-1"
+  role="dialog"
+  aria-hidden="true"
+>
   <div class="modal-content">
     <span class="close" title="Close Modal">&times;</span>
     <h2>Schedule New Transport</h2>
@@ -84,10 +107,24 @@
           <option>Brinjal</option>
         </select>
         <input name="weight" type="text" placeholder="e.g., 2500 kg" required />
-        <input name="distance" type="number" placeholder="Distance in km" required />
-        <input type="text" name="temperature" placeholder="Temperature (°C)" required />
-        <input type="text" name="humidity" placeholder="Humidity (%)" required />
-
+        <input
+          name="distance"
+          type="number"
+          placeholder="Distance in km"
+          required
+        />
+        <input
+          type="text"
+          name="temperature"
+          placeholder="Temperature (°C)"
+          required
+        />
+        <input
+          type="text"
+          name="humidity"
+          placeholder="Humidity (%)"
+          required
+        />
       </div>
 
       <div class="form-group">

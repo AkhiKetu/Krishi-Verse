@@ -9,6 +9,12 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
       rel="stylesheet"
     />
+    <!-- Leaflet CSS For Maps-->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script
       src="https://kit.fontawesome.com/a076d05399.js"
       crossorigin="anonymous"
@@ -241,7 +247,6 @@
       window.addEventListener("DOMContentLoaded", loadHomeChart);
 
       // ---------- Transportation Page Logic ----------
-
       function initTransportationPage() {
         const modal = document.getElementById("scheduleModal");
         const scheduleBtn = document.querySelector(".schedule-btn");
@@ -259,6 +264,15 @@
         );
 
         const vehicleList = ["RT-001", "RT-002", "DC-003", "DC-004"];
+
+        // Search bar
+        const searchInput = document.getElementById("transportSearch");
+
+        // GPS Map elements
+        const gpsButton = document.getElementById("gpsButton");
+        const mapContainer = document.getElementById("mapContainer"); // Container div that wraps #transportMap
+        let map = null;
+        let mapInitialized = false;
 
         if (!modal || !scheduleBtn || !form || !tableBody) {
           console.warn("Transportation page elements not found.");
@@ -376,7 +390,7 @@
           bindEditDeleteButtons();
         };
 
-        // Bind Edit and Delete buttons on all rows
+        // Bind Edit and Delete buttons
         function bindEditDeleteButtons() {
           tableBody.querySelectorAll(".edit-btn").forEach((btn) => {
             btn.onclick = (e) => {
@@ -431,7 +445,7 @@
           });
         }
 
-        // Update summary cards info
+        // Update summary cards
         function updateSummaryCards() {
           const rows = tableBody.querySelectorAll("tr");
           const today = new Date().toISOString().split("T")[0];
@@ -458,7 +472,47 @@
           availableVehiclesCount.textContent = available.length;
         }
 
-        // Initial setup
+        // Search functionality
+        if (searchInput) {
+          searchInput.addEventListener("keyup", () => {
+            const filter = searchInput.value.toLowerCase();
+            const rows = tableBody.getElementsByTagName("tr");
+            Array.from(rows).forEach((row) => {
+              const text = row.innerText.toLowerCase();
+              row.style.display = text.includes(filter) ? "" : "none";
+            });
+          });
+        }
+
+        // GPS Map toggle and initialization
+        if (gpsButton && mapContainer) {
+          gpsButton.addEventListener("click", function () {
+            if (
+              mapContainer.style.display === "none" ||
+              !mapContainer.style.display
+            ) {
+              mapContainer.style.display = "block";
+
+              if (!mapInitialized) {
+                map = L.map("transportMap").setView([23.685, 90.3563], 7);
+                L.tileLayer(
+                  "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                  {
+                    attribution:
+                      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                  }
+                ).addTo(map);
+                mapInitialized = true;
+              } else {
+                map.invalidateSize(); // Fix map display after container shown again
+              }
+            } else {
+              mapContainer.style.display = "none";
+            }
+          });
+        }
+
+        // Initial updates
         updateSummaryCards();
         updateFleetStatus();
         bindEditDeleteButtons();
@@ -814,6 +868,19 @@
           closeUploadModal();
         };
 
+        // Handle Mark Reviewed button clicks using event delegation
+        tableBody.addEventListener("click", (e) => {
+          if (e.target.classList.contains("review-btn")) {
+            const row = e.target.closest("tr");
+            const index = Array.from(tableBody.children).indexOf(row);
+            if (index >= 0) {
+              documents[index].status = "Reviewed";
+              documents[index].compliance = "Compliant";
+              renderDocuments();
+            }
+          }
+        });
+
         function renderDocuments() {
           const search = searchInput.value.toLowerCase();
           const filterType = typeFilter.value.toLowerCase();
@@ -869,6 +936,7 @@
           <td>
             <button class="view-btn" onclick="alert('Preview not implemented')">👁️ View</button>
             <button class="download-btn" onclick="downloadPDF(${index})">⬇️ Download</button>
+            <button class="review-btn">✔️ Mark Reviewed</button>
           </td>
         `;
               tableBody.appendChild(row);

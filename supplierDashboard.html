@@ -9,6 +9,12 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
       rel="stylesheet"
     />
+    <!-- Leaflet CSS For Maps-->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script
       src="https://kit.fontawesome.com/a076d05399.js"
       crossorigin="anonymous"
@@ -117,198 +123,207 @@
     </div>
 
     <script>
-     document.addEventListener("DOMContentLoaded", () => {
-  // Check login status
-  if (localStorage.getItem("loggedIn") !== "true") {
-    window.location.href = "login.html";
-    return;
-  }
+      document.addEventListener("DOMContentLoaded", () => {
+        // Check login status
+        if (localStorage.getItem("loggedIn") !== "true") {
+          window.location.href = "login.html";
+          return;
+        }
 
-  // Display username and role
-  const username = localStorage.getItem("username") || "User";
-  const role = localStorage.getItem("designation") || "supplier";
+        // Display username and role
+        const username = localStorage.getItem("username") || "User";
+        const role = localStorage.getItem("designation") || "supplier";
 
-  document.getElementById(
-    "displayUsername"
-  ).innerHTML = `${username}<br><span>${formatRole(role)}</span>`;
+        document.getElementById(
+          "displayUsername"
+        ).innerHTML = `${username}<br><span>${formatRole(role)}</span>`;
 
-  // Sidebar nav link click handler
-  document.querySelectorAll("nav a").forEach((link) => {
-    link.addEventListener("click", function (e) {
-      e.preventDefault();
-      const page = this.getAttribute("data-page");
-      loadContent(page);
-    });
-  });
+        // Sidebar nav link click handler
+        document.querySelectorAll("nav a").forEach((link) => {
+          link.addEventListener("click", function (e) {
+            e.preventDefault();
+            const page = this.getAttribute("data-page");
+            loadContent(page);
+          });
+        });
 
-  // Load default page
-  loadContent("supplier-home");
-});
+        // Load default page
+        loadContent("supplier-home");
+      });
 
-// Format role display
-function formatRole(role) {
-  switch (role) {
-    case "warehouseManager":
-      return "Warehouse-Manager";
-    case "supplier":
-      return "Supplier";
-    case "transportation":
-      return "Transportation";
-    case "distributor":
-      return "Distributor";
-    case "retailer":
-      return "Retailer";
-    default:
-      return role;
-  }
-}
-
-// Load page content and initialize its JS
-function loadContent(page) {
-  fetch(`${page}.html`)
-    .then((res) => {
-      if (!res.ok) throw new Error("Network response was not ok");
-      return res.text();
-    })
-    .then((html) => {
-      const content = document.querySelector(".content");
-      content.innerHTML = html;
-
-      // Page-specific init functions
-      if (page === "transportation") {
-        initTransportationPage(content);
-      } else if (page === "supplier-crop") {
-        setupCropPage(content);
+      // Format role display
+      function formatRole(role) {
+        switch (role) {
+          case "warehouseManager":
+            return "Warehouse-Manager";
+          case "supplier":
+            return "Supplier";
+          case "transportation":
+            return "Transportation";
+          case "distributor":
+            return "Distributor";
+          case "retailer":
+            return "Retailer";
+          default:
+            return role;
+        }
       }
-      // Add more page inits here if needed
-    })
-    .catch(() => {
-      document.querySelector(
-        ".content"
-      ).innerHTML = `<p>Error loading ${page}.</p>`;
-    });
-}
 
-// Logout function
-function logout() {
-  localStorage.removeItem("loggedIn");
-  window.location.href = "index.html";
-}
+      // Load page content and initialize its JS
+      function loadContent(page) {
+        fetch(`${page}.html`)
+          .then((res) => {
+            if (!res.ok) throw new Error("Network response was not ok");
+            return res.text();
+          })
+          .then((html) => {
+            const content = document.querySelector(".content");
+            content.innerHTML = html;
 
-// Toggle profile dropdown
-function toggleDropdown(e) {
-  e.preventDefault();
-  document.getElementById("dropdown-menu").classList.toggle("show");
-}
+            // Page-specific init functions
+            if (page === "transportation") {
+              initTransportationPage(content);
+            } else if (page === "supplier-crop") {
+              setupCropPage(content);
+            }
+            // Add more page inits here if needed
+          })
+          .catch(() => {
+            document.querySelector(
+              ".content"
+            ).innerHTML = `<p>Error loading ${page}.</p>`;
+          });
+      }
 
-window.addEventListener("click", function (e) {
-  if (!e.target.closest(".profile-dropdown")) {
-    document.getElementById("dropdown-menu").classList.remove("show");
-  }
-});
+      // Logout function
+      function logout() {
+        localStorage.removeItem("loggedIn");
+        window.location.href = "index.html";
+      }
 
-// -------------------- Transportation Page Logic --------------------
-function initTransportationPage(content) {
-  const modal = content.querySelector("#scheduleModal");
-  const scheduleBtn = content.querySelector(".schedule-btn");
-  const form = content.querySelector(".schedule-form");
-  const tableBody = content.querySelector(".transport-table tbody");
+      // Toggle profile dropdown
+      function toggleDropdown(e) {
+        e.preventDefault();
+        document.getElementById("dropdown-menu").classList.toggle("show");
+      }
 
-  const summaryActiveRoutes = content.querySelector(
-    ".summary-cards .card:nth-child(1) .value"
-  );
-  const summaryScheduledToday = content.querySelector(
-    ".summary-cards .card:nth-child(1) .sub"
-  );
-  const availableVehiclesCount = content.querySelector(
-    ".summary-cards .card:nth-child(2) .value"
-  );
+      window.addEventListener("click", function (e) {
+        if (!e.target.closest(".profile-dropdown")) {
+          document.getElementById("dropdown-menu").classList.remove("show");
+        }
+      });
 
-  const vehicleList = ["RT-001", "RT-002", "DC-003", "DC-004"];
+      // ---------- Transportation Page Logic ----------
+      function initTransportationPage() {
+        const modal = document.getElementById("scheduleModal");
+        const scheduleBtn = document.querySelector(".schedule-btn");
+        const form = document.querySelector(".schedule-form");
+        const tableBody = document.querySelector(".transport-table tbody");
 
-  if (!modal || !scheduleBtn || !form || !tableBody) {
-    console.warn("Transportation page elements not found.");
-    return;
-  }
+        const summaryActiveRoutes = document.querySelector(
+          ".summary-cards .card:nth-child(1) .value"
+        );
+        const summaryScheduledToday = document.querySelector(
+          ".summary-cards .card:nth-child(1) .sub"
+        );
+        const availableVehiclesCount = document.querySelector(
+          ".summary-cards .card:nth-child(2) .value"
+        );
 
-  // Open modal
-  scheduleBtn.onclick = () => {
-    form.reset();
-    modal.style.display = "block";
-    form.setAttribute("data-editing", "false");
-    form.editingRow = null;
-  };
+        const vehicleList = ["RT-001", "RT-002", "DC-003", "DC-004"];
 
-  // Close modal clicking outside
-  modal.addEventListener("click", (e) => {
-    if (e.target === modal) {
-      modal.style.display = "none";
-    }
-  });
+        // Search bar
+        const searchInput = document.getElementById("transportSearch");
 
-  // Close modal on (x) click
-  modal.querySelector(".close").onclick = () => {
-    modal.style.display = "none";
-  };
+        // GPS Map elements
+        const gpsButton = document.getElementById("gpsButton");
+        const mapContainer = document.getElementById("mapContainer"); // Container div that wraps #transportMap
+        let map = null;
+        let mapInitialized = false;
 
-  // Close modal on cancel
-  form.querySelector(".cancel-btn").onclick = () => {
-    modal.style.display = "none";
-  };
+        if (!modal || !scheduleBtn || !form || !tableBody) {
+          console.warn("Transportation page elements not found.");
+          return;
+        }
 
-  // Handle form submit
-  form.onsubmit = function (e) {
-    e.preventDefault();
+        // Open modal to add new transport
+        scheduleBtn.onclick = () => {
+          form.reset();
+          modal.style.display = "block";
+          form.setAttribute("data-editing", "false");
+          form.editingRow = null;
+        };
 
-    const editing = form.getAttribute("data-editing") === "true";
-    const editingRow = form.editingRow;
+        // Close modal if clicked outside content
+        modal.addEventListener("click", (e) => {
+          if (e.target === modal) {
+            modal.style.display = "none";
+          }
+        });
 
-    const origin = form.origin.value.trim();
-    const destination = form.destination.value.trim();
-    const product = form.product.value;
-    const weight = form.weight.value.trim();
-    const vehicle = form.vehicle.value;
-    const driver = form.driver.value;
-    const date = form.date.value;
-    const time = form.time.value;
-    const priority = form.priority.value;
-    const temperature = form.temperature.value;
-    const humidity = form.humidity.value;
-    const distanceKm = parseFloat(form.distance.value) || 0;
+        // Close modal on (x) click
+        modal.querySelector(".close").onclick = () => {
+          modal.style.display = "none";
+        };
 
-    if (
-      !origin ||
-      !destination ||
-      !product ||
-      !weight ||
-      !vehicle ||
-      !driver ||
-      !date ||
-      !time ||
-      !priority ||
-      !temperature ||
-      !humidity
-    ) {
-      alert("Please fill in all required fields.");
-      return;
-    }
+        // Close modal on cancel button
+        form.querySelector(".cancel-btn").onclick = () => {
+          modal.style.display = "none";
+        };
 
-    const routeId =
-      editing && editingRow
-        ? editingRow.dataset.id
-        : "TRP-" + Math.floor(Math.random() * 900 + 100);
+        // Handle form submit (Add/Edit)
+        form.onsubmit = function (e) {
+          e.preventDefault();
 
-    const routeText = `${origin} → ${destination}<br><small>${product} (${weight})</small>`;
-    const vehicleDriver = `🚛 ${vehicle}<br>👤 ${driver}`;
-    const scheduleText = `${date}<br>${time}`;
-    const distance = `${distanceKm} km<br><small>ETA: ${Math.floor(
-      Math.random() * 3 + 1
-    )} hrs</small>`;
-    const priorityTag = `<span class="priority ${priority.toLowerCase()}">${priority}</span>`;
-    const statusTag = `<span class="status scheduled">Scheduled</span>`;
-    const cost = `${(distanceKm * 15).toFixed(2)} BDT`;
+          const editing = form.getAttribute("data-editing") === "true";
+          const editingRow = form.editingRow;
 
-    const rowHTML = `
+          const origin = form.origin.value.trim();
+          const destination = form.destination.value.trim();
+          const product = form.product.value;
+          const weight = form.weight.value.trim();
+          const vehicle = form.vehicle.value;
+          const driver = form.driver.value;
+          const date = form.date.value;
+          const time = form.time.value;
+          const priority = form.priority.value;
+          const temperature = form.temperature.value;
+          const humidity = form.humidity.value;
+          const distanceKm = parseFloat(form.distance.value) || 0;
+
+          if (
+            !origin ||
+            !destination ||
+            !product ||
+            !weight ||
+            !vehicle ||
+            !driver ||
+            !date ||
+            !time ||
+            !priority ||
+            !temperature ||
+            !humidity
+          ) {
+            alert("Please fill in all required fields.");
+            return;
+          }
+
+          const routeId =
+            editing && editingRow
+              ? editingRow.dataset.id
+              : "TRP-" + Math.floor(Math.random() * 900 + 100);
+
+          const routeText = `${origin} → ${destination}<br><small>${product} (${weight})</small>`;
+          const vehicleDriver = `🚛 ${vehicle}<br>👤 ${driver}`;
+          const scheduleText = `${date}<br>${time}`;
+          const distance = `${distanceKm} km<br><small>ETA: ${Math.floor(
+            Math.random() * 3 + 1
+          )} hrs</small>`;
+          const priorityTag = `<span class="priority ${priority.toLowerCase()}">${priority}</span>`;
+          const statusTag = `<span class="status scheduled">Scheduled</span>`;
+          const cost = `${(distanceKm * 15).toFixed(2)} BDT`;
+
+          const rowHTML = `
       <td>${routeId}</td>
       <td>${routeText}</td>
       <td>${vehicleDriver}</td>
@@ -325,173 +340,233 @@ function initTransportationPage(content) {
       </td>
     `;
 
-    if (editing && editingRow) {
-      editingRow.innerHTML = rowHTML;
-      editingRow.dataset.id = routeId;
-    } else {
-      const newRow = document.createElement("tr");
-      newRow.innerHTML = rowHTML;
-      newRow.dataset.id = routeId;
-      tableBody.appendChild(newRow);
-    }
+          if (editing && editingRow) {
+            editingRow.innerHTML = rowHTML;
+            editingRow.dataset.id = routeId;
+          } else {
+            const newRow = document.createElement("tr");
+            newRow.innerHTML = rowHTML;
+            newRow.dataset.id = routeId;
+            tableBody.appendChild(newRow);
+          }
 
-    modal.style.display = "none";
-    form.reset();
-    updateSummaryCards();
-    updateFleetStatus();
-    bindEditDeleteButtons();
-  };
-
-  // Bind edit/delete buttons on all rows
-  function bindEditDeleteButtons() {
-    tableBody.querySelectorAll(".edit-btn").forEach((btn) => {
-      btn.onclick = (e) => {
-        const row = e.target.closest("tr");
-        const cells = row.querySelectorAll("td");
-
-        const html = cells[1].innerHTML;
-        const [routePart, productPart] = html.split("<br><small>");
-        const [originText, destinationText] = routePart
-          .split("→")
-          .map((s) => s.trim());
-        const productName = productPart.replace(")</small>", "").split("(")[0].trim();
-        const weight = productPart.match(/\(([^)]+)\)/)[1];
-
-        form.setAttribute("data-editing", "true");
-        form.editingRow = row;
-
-        form.origin.value = originText;
-        form.destination.value = destinationText;
-        form.product.value = productName;
-        form.weight.value = weight;
-        form.vehicle.value = cells[2].innerText.split("\n")[0].replace("🚛 ", "").trim();
-        form.driver.value = cells[2].innerText.split("\n")[1].replace("👤 ", "").trim();
-        form.date.value = cells[3].innerText.split("\n")[0];
-        form.time.value = cells[3].innerText.split("\n")[1];
-        form.priority.value = cells[5].innerText.trim();
-        form.distance.value = parseFloat(cells[4].innerText) || "";
-        form.temperature.value = cells[8].innerText;
-        form.humidity.value = cells[9].innerText;
-
-        modal.style.display = "block";
-      };
-    });
-
-    tableBody.querySelectorAll(".delete-btn").forEach((btn) => {
-      btn.onclick = (e) => {
-        if (confirm("Are you sure you want to delete this route?")) {
-          e.target.closest("tr").remove();
+          modal.style.display = "none";
+          form.reset();
           updateSummaryCards();
           updateFleetStatus();
+          bindEditDeleteButtons();
+        };
+
+        // Bind Edit and Delete buttons
+        function bindEditDeleteButtons() {
+          tableBody.querySelectorAll(".edit-btn").forEach((btn) => {
+            btn.onclick = (e) => {
+              const row = e.target.closest("tr");
+              const cells = row.querySelectorAll("td");
+
+              const html = cells[1].innerHTML;
+              const [routePart, productPart] = html.split("<br><small>");
+              const [originText, destinationText] = routePart
+                .split("→")
+                .map((s) => s.trim());
+              const productName = productPart
+                .replace(")</small>", "")
+                .split("(")[0]
+                .trim();
+              const weight = productPart.match(/\(([^)]+)\)/)[1];
+
+              form.setAttribute("data-editing", "true");
+              form.editingRow = row;
+
+              form.origin.value = originText;
+              form.destination.value = destinationText;
+              form.product.value = productName;
+              form.weight.value = weight;
+              form.vehicle.value = cells[2].innerText
+                .split("\n")[0]
+                .replace("🚛 ", "")
+                .trim();
+              form.driver.value = cells[2].innerText
+                .split("\n")[1]
+                .replace("👤 ", "")
+                .trim();
+              form.date.value = cells[3].innerText.split("\n")[0];
+              form.time.value = cells[3].innerText.split("\n")[1];
+              form.priority.value = cells[5].innerText.trim();
+              form.distance.value = parseFloat(cells[4].innerText) || "";
+              form.temperature.value = cells[8].innerText;
+              form.humidity.value = cells[9].innerText;
+
+              modal.style.display = "block";
+            };
+          });
+
+          tableBody.querySelectorAll(".delete-btn").forEach((btn) => {
+            btn.onclick = (e) => {
+              if (confirm("Are you sure you want to delete this route?")) {
+                e.target.closest("tr").remove();
+                updateSummaryCards();
+                updateFleetStatus();
+              }
+            };
+          });
         }
-      };
-    });
-  }
 
-  // Update summary cards
-  function updateSummaryCards() {
-    const rows = tableBody.querySelectorAll("tr");
-    const today = new Date().toISOString().split("T")[0];
-    let scheduledToday = 0;
+        // Update summary cards
+        function updateSummaryCards() {
+          const rows = tableBody.querySelectorAll("tr");
+          const today = new Date().toISOString().split("T")[0];
+          let scheduledToday = 0;
 
-    rows.forEach((row) => {
-      const scheduleDate = row.cells[3].innerText.split("\n")[0];
-      if (scheduleDate === today) scheduledToday++;
-    });
+          rows.forEach((row) => {
+            const scheduleDate = row.cells[3].innerText.split("\n")[0];
+            if (scheduleDate === today) scheduledToday++;
+          });
 
-    summaryActiveRoutes.textContent = rows.length;
-    summaryScheduledToday.textContent = `${scheduledToday} scheduled for today`;
-  }
+          summaryActiveRoutes.textContent = rows.length;
+          summaryScheduledToday.textContent = `${scheduledToday} scheduled for today`;
+        }
 
-  // Update available vehicles count
-  function updateFleetStatus() {
-    const usedVehicles = Array.from(tableBody.querySelectorAll("tr")).map(
-      (row) => row.cells[2].innerText.split("\n")[0].replace("🚛 ", "").trim()
-    );
-    const available = vehicleList.filter((v) => !usedVehicles.includes(v));
-    availableVehiclesCount.textContent = available.length;
-  }
+        // Update available vehicles count
+        function updateFleetStatus() {
+          const usedVehicles = Array.from(tableBody.querySelectorAll("tr")).map(
+            (row) =>
+              row.cells[2].innerText.split("\n")[0].replace("🚛 ", "").trim()
+          );
+          const available = vehicleList.filter(
+            (v) => !usedVehicles.includes(v)
+          );
+          availableVehiclesCount.textContent = available.length;
+        }
 
-  // Run once at start
-  updateSummaryCards();
-  updateFleetStatus();
-  bindEditDeleteButtons();
-}
+        // Search functionality
+        if (searchInput) {
+          searchInput.addEventListener("keyup", () => {
+            const filter = searchInput.value.toLowerCase();
+            const rows = tableBody.getElementsByTagName("tr");
+            Array.from(rows).forEach((row) => {
+              const text = row.innerText.toLowerCase();
+              row.style.display = text.includes(filter) ? "" : "none";
+            });
+          });
+        }
 
-// -------------------- Crop Page Logic --------------------
-function setupCropPage(content) {
-  const cropTableBody = content.querySelector("#cropTableBody");
-  const addCropBtn = content.querySelector("#addCropBtn");
-  const cropModal = document.getElementById("cropModal");
-  const cropForm = document.getElementById("cropForm");
+        // GPS Map toggle and initialization
+        if (gpsButton && mapContainer) {
+          gpsButton.addEventListener("click", function () {
+            if (
+              mapContainer.style.display === "none" ||
+              !mapContainer.style.display
+            ) {
+              mapContainer.style.display = "block";
 
-  if (!addCropBtn || !cropForm || !cropTableBody) {
-    console.warn("Required elements not found in crop page.");
-    return;
-  }
+              if (!mapInitialized) {
+                map = L.map("transportMap").setView([23.685, 90.3563], 7);
+                L.tileLayer(
+                  "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                  {
+                    attribution:
+                      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                  }
+                ).addTo(map);
+                mapInitialized = true;
+              } else {
+                map.invalidateSize(); // Fix map display after container shown again
+              }
+            } else {
+              mapContainer.style.display = "none";
+            }
+          });
+        }
 
-  let editingRow = null;
+        // Initial updates
+        updateSummaryCards();
+        updateFleetStatus();
+        bindEditDeleteButtons();
+      }
 
-  addCropBtn.onclick = () => {
-    editingRow = null;
-    cropForm.reset();
-    document.getElementById("modalTitle").textContent = "Add Crop";
-    cropModal.style.display = "flex";
-  };
+      // Initialize after DOM loads
+      document.addEventListener("DOMContentLoaded", () => {
+        initTransportationPage();
+      });
 
-  cropForm.onsubmit = function (e) {
-    e.preventDefault();
+      // -------------------- Crop Page Logic --------------------
+      function setupCropPage(content) {
+        const cropTableBody = content.querySelector("#cropTableBody");
+        const addCropBtn = content.querySelector("#addCropBtn");
+        const cropModal = document.getElementById("cropModal");
+        const cropForm = document.getElementById("cropForm");
 
-    const seasonSelect = document.getElementById("cropSeason");
-    const seasonValue = seasonSelect.value;
-    const seasonLabel = {
-      summer: "Summer",
-      winter: "Winter",
-      monsoon: "Monsoon",
-      "full-year": "Full Year",
-    }[seasonValue];
+        if (!addCropBtn || !cropForm || !cropTableBody) {
+          console.warn("Required elements not found in crop page.");
+          return;
+        }
 
-    const crop = {
-      name: document.getElementById("cropName").value,
-      type: document.getElementById("cropType").value,
-      quantity: document.getElementById("cropQuantity").value,
-      status: document.getElementById("cropStatus").value,
-      date: document.getElementById("cropDate").value,
-      season: seasonLabel || "All",
-    };
+        let editingRow = null;
 
-    const newRow = renderCropRow(crop);
-    if (editingRow) {
-      editingRow.replaceWith(newRow);
-    } else {
-      cropTableBody.appendChild(newRow);
-    }
+        addCropBtn.onclick = () => {
+          editingRow = null;
+          cropForm.reset();
+          document.getElementById("modalTitle").textContent = "Add Crop";
+          cropModal.style.display = "flex";
+        };
 
-    cropModal.style.display = "none";
-    filterTable();
-  };
+        cropForm.onsubmit = function (e) {
+          e.preventDefault();
 
-  function filterTable() {
-    const seasonFilter = content.querySelector("#seasonFilter");
-    if (!seasonFilter) return;
-    const selected = seasonFilter.value;
-    const rows = cropTableBody.querySelectorAll("tr");
-    rows.forEach((row) => {
-      const season = row.getAttribute("data-season");
-      row.style.display = selected === "All" || season === selected ? "" : "none";
-    });
-  }
+          const seasonSelect = document.getElementById("cropSeason");
+          const seasonValue = seasonSelect.value;
+          const seasonLabel = {
+            summer: "Summer",
+            winter: "Winter",
+            monsoon: "Monsoon",
+            "full-year": "Full Year",
+          }[seasonValue];
 
-  if (content.querySelector("#seasonFilter")) {
-    content.querySelector("#seasonFilter").addEventListener("change", filterTable);
-  }
-  filterTable();
+          const crop = {
+            name: document.getElementById("cropName").value,
+            type: document.getElementById("cropType").value,
+            quantity: document.getElementById("cropQuantity").value,
+            status: document.getElementById("cropStatus").value,
+            date: document.getElementById("cropDate").value,
+            season: seasonLabel || "All",
+          };
 
-  // Crop row render helper
-  function renderCropRow(crop) {
-    const row = document.createElement("tr");
-    row.setAttribute("data-season", crop.season);
-    row.innerHTML = `
+          const newRow = renderCropRow(crop);
+          if (editingRow) {
+            editingRow.replaceWith(newRow);
+          } else {
+            cropTableBody.appendChild(newRow);
+          }
+
+          cropModal.style.display = "none";
+          filterTable();
+        };
+
+        function filterTable() {
+          const seasonFilter = content.querySelector("#seasonFilter");
+          if (!seasonFilter) return;
+          const selected = seasonFilter.value;
+          const rows = cropTableBody.querySelectorAll("tr");
+          rows.forEach((row) => {
+            const season = row.getAttribute("data-season");
+            row.style.display =
+              selected === "All" || season === selected ? "" : "none";
+          });
+        }
+
+        if (content.querySelector("#seasonFilter")) {
+          content
+            .querySelector("#seasonFilter")
+            .addEventListener("change", filterTable);
+        }
+        filterTable();
+
+        // Crop row render helper
+        function renderCropRow(crop) {
+          const row = document.createElement("tr");
+          row.setAttribute("data-season", crop.season);
+          row.innerHTML = `
       <td>${crop.name}</td>
       <td>${crop.type}</td>
       <td>${crop.quantity}</td>
@@ -503,41 +578,44 @@ function setupCropPage(content) {
         <button onclick="deleteCrop(this)" class="delete-btn">Delete</button>
       </td>
     `;
-    return row;
-  }
+          return row;
+        }
 
-  // Edit crop button handler
-  window.editCrop = function (button) {
-    const row = button.closest("tr");
-    editingRow = row;
-    document.getElementById("modalTitle").textContent = "Edit Crop";
-    document.getElementById("cropName").value = row.cells[0].textContent;
-    document.getElementById("cropType").value = row.cells[1].textContent;
-    document.getElementById("cropQuantity").value = row.cells[2].textContent;
-    document.getElementById("cropStatus").value = row.cells[3].textContent;
-    document.getElementById("cropDate").value = row.cells[4].textContent;
-    const season = row.cells[5].textContent.toLowerCase().replace(" ", "-");
-    document.getElementById("cropSeason").value = season;
-    document.getElementById("cropModal").style.display = "flex";
-  };
+        // Edit crop button handler
+        window.editCrop = function (button) {
+          const row = button.closest("tr");
+          editingRow = row;
+          document.getElementById("modalTitle").textContent = "Edit Crop";
+          document.getElementById("cropName").value = row.cells[0].textContent;
+          document.getElementById("cropType").value = row.cells[1].textContent;
+          document.getElementById("cropQuantity").value =
+            row.cells[2].textContent;
+          document.getElementById("cropStatus").value =
+            row.cells[3].textContent;
+          document.getElementById("cropDate").value = row.cells[4].textContent;
+          const season = row.cells[5].textContent
+            .toLowerCase()
+            .replace(" ", "-");
+          document.getElementById("cropSeason").value = season;
+          document.getElementById("cropModal").style.display = "flex";
+        };
 
-  // Delete crop button handler
-  window.deleteCrop = function (button) {
-    if (confirm("Are you sure you want to delete this crop?")) {
-      const row = button.closest("tr");
-      row.remove();
-    }
-  };
+        // Delete crop button handler
+        window.deleteCrop = function (button) {
+          if (confirm("Are you sure you want to delete this crop?")) {
+            const row = button.closest("tr");
+            row.remove();
+          }
+        };
 
-  // Close modal if clicking outside
-  window.addEventListener("click", function (e) {
-    const cropModal = document.getElementById("cropModal");
-    if (e.target === cropModal) {
-      cropModal.style.display = "none";
-    }
-  });
-}
-
+        // Close modal if clicking outside
+        window.addEventListener("click", function (e) {
+          const cropModal = document.getElementById("cropModal");
+          if (e.target === cropModal) {
+            cropModal.style.display = "none";
+          }
+        });
+      }
     </script>
   </body>
 </html>

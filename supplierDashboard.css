@@ -519,7 +519,9 @@ button {
 .priority.high {
   background-color: #e74c3c;
 }
-
+.priority.low {
+  background-color: #f39c12;
+}
 /* Transport Table */
 .transport-table {
   width: 100%;
@@ -557,19 +559,22 @@ button {
 
 .modal-content {
   background: white;
-  margin: 5% auto;
+  margin: 2% auto;
   padding: 20px;
-  width: 600px;
-  max-width: 95%;
-  border-radius: 10px;
+  width: 90%; /* Increased from 600px */
+  max-width: 1200px; /* Allow bigger space */
+  max-height: 90vh; /* So it fits screen height */
+  overflow-y: auto; /* Scroll if content is too tall */
+  border-radius: 12px;
   position: relative;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
 }
 
 .close {
   position: absolute;
   right: 20px;
   top: 15px;
-  font-size: 24px;
+  font-size: 26px;
   cursor: pointer;
 }
 
@@ -600,12 +605,14 @@ button {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
+  margin-top: 15px;
 }
 
 .modal-actions button {
   padding: 10px 16px;
   border-radius: 6px;
   font-weight: 500;
+  border: none;
 }
 
 .modal-actions button[type="submit"] {
@@ -616,6 +623,57 @@ button {
 .modal-actions button[type="button"] {
   background-color: #ccc;
   color: #333;
+}
+/* Search Bar Styles */
+.search-container {
+  margin: 15px 0;
+}
+
+#transportSearch {
+  width: 300px;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#transportSearch:focus {
+  border-color: #2ecc71;
+  box-shadow: 0 0 4px rgba(46, 204, 113, 0.4);
+  outline: none;
+}
+/* GPS Button Styling */
+#gpsButton {
+  background-color: #33d838;
+  color: white;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-bottom: 10px;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+#gpsButton:hover {
+  background-color: #7ce181;
+  transform: scale(1.02);
+}
+
+#gpsButton:active {
+  transform: scale(0.98);
+}
+#mapContainer {
+  display: none; /* initially hidden */
+  height: 400px;
+  width: 100%;
+  margin-top: 20px;
+}
+
+#transportMap {
+  height: 100%;
+  width: 100%;
 }
 
 /*inventory css*/
