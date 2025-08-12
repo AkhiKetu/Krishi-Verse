@@ -163,13 +163,37 @@
             if (page === "product") initProductPage();
             if (page === "warehouse") initWarehousePage();
             if (page === "consumers") initConsumerPage();
-            if (page === "home") loadHomeChart();
+            if (page === "home") {
+              loadHomeChart();
+              renderTransportationChart();
+              loadHomeConsumers();
+            }
             if (page === "transportation") initTransportationPage();
             if (page === "documents") initDocumentPage();
           })
           .catch((err) => {
             contentArea.innerHTML = `<p>Error loading ${page} content.</p>`;
           });
+      }
+      function loadHomeConsumers() {
+        fetch("consumers.php")
+          .then((res) => {
+            if (!res.ok) throw new Error("Network response was not ok");
+            return res.json();
+          })
+          .then((data) => {
+            if (data.success && data.counts) {
+              document.getElementById("totalFarmers").textContent =
+                data.counts.farmers || 0;
+              document.getElementById("totalSuppliers").textContent =
+                data.counts.suppliers || 0;
+              document.getElementById("totalCustomers").textContent =
+                data.counts.customers || 0;
+            } else {
+              console.error("Invalid counts data from consumers.php", data);
+            }
+          })
+          .catch((err) => console.error("Error loading home counts:", err));
       }
 
       function loadHomeChart() {
@@ -245,6 +269,36 @@
 
       // Call the function once the page loads
       window.addEventListener("DOMContentLoaded", loadHomeChart);
+
+      //--transport Dummy Graph-----------
+      function renderTransportationChart() {
+        const ctx = document.getElementById("transportChart").getContext("2d");
+
+        new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+            datasets: [
+              {
+                label: "Transportation Cost ($)",
+                data: [1200, 1350, 1100, 1450, 1600, 1550, 1700],
+                borderColor: "rgba(75, 192, 192, 1)",
+                backgroundColor: "rgba(75, 192, 192, 0.2)",
+                fill: true,
+                tension: 0.3,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { position: "top" },
+              title: { display: true, text: "Monthly Transportation Cost" },
+            },
+            scales: { y: { beginAtZero: false } },
+          },
+        });
+      }
 
       // ---------- Transportation Page Logic ----------
       function initTransportationPage() {
@@ -1083,21 +1137,18 @@
 
       // ---------- Consumer Page Logic ----------
       function initConsumerPage() {
-        // Elements
         const addBtn = document.querySelector(".add-consumer-btn");
         const modal = document.getElementById("addConsumerModal");
         const form = document.getElementById("consumerForm");
         const tbody = document.getElementById("consumerTableBody");
-        const searchInput = document.querySelector(
-          '.filter-row input[type="text"]'
-        );
-        const typeFilter = document.querySelectorAll(".filter-row select")[0];
-        const statusFilter = document.querySelectorAll(".filter-row select")[1];
+        const searchInput = document.getElementById("searchConsumer");
+        const typeFilter = document.getElementById("filterType");
+        const statusFilter = document.getElementById("filterStatus");
 
         const countCards = {
           farmer: document.getElementById("totalFarmers"),
           supplier: document.getElementById("totalSuppliers"),
-          customer: document.getElementById("feedbackCount"),
+          customer: document.getElementById("totalCustomers"),
           newThisMonth: document.getElementById("newThisMonth"),
         };
 
@@ -1114,42 +1165,45 @@
           return;
         }
 
-        // Load existing rows from the table into consumers array
         let consumers = [];
-        const existingRows = tbody.querySelectorAll("tr");
-        existingRows.forEach((row) => {
-          const cells = row.querySelectorAll("td");
-          if (cells.length >= 5) {
-            const name = cells[0].textContent.trim();
-            const type = cells[1].textContent.trim().toLowerCase();
-            const location = cells[2].textContent.trim();
-            // Extract email and phone from the 4th cell
-            const contactText = cells[3].textContent;
-            const emailMatch = contactText.match(/📧\s*([^\n]+)/);
-            const phoneMatch = contactText.match(/📞\s*([^\n]+)/);
-            const email = emailMatch ? emailMatch[1].trim() : "";
-            const phone = phoneMatch ? phoneMatch[1].trim() : "";
-            const status = cells[4].textContent.trim().toLowerCase();
 
-            consumers.push({ name, type, location, email, phone, status });
-          }
-        });
+        function loadConsumers() {
+          fetch("consumers.php")
+            .then((res) => {
+              if (!res.ok) throw new Error("Network response was not ok");
+              return res.json();
+            })
+            .then((data) => {
+              if (data.consumers && Array.isArray(data.consumers)) {
+                consumers = data.consumers.map((c) => ({
+                  name: c.name || "",
+                  type: (c.type || "").toLowerCase(),
+                  email: c.email || "",
+                  phone: c.phone || "",
+                  location: c.location || "",
+                  status: (c.status || "").toLowerCase(),
+                }));
+                updateTable();
+                updateCards(data.counts);
+              } else {
+                console.error("Invalid data format from consumers.php", data);
+                alert("Failed to load consumers data.");
+              }
+            })
+            .catch((err) => {
+              console.error("Error loading consumers content:", err);
+              alert("Error loading consumers content.");
+            });
+        }
 
-        // Add new consumer (from modal)
         addBtn.onclick = () => {
           modal.style.display = "flex";
         };
-        const closeBtn = modal.querySelector(".close-btn");
-        closeBtn.onclick = () => {
+
+        modal.querySelector(".close-btn").onclick = () => {
           modal.style.display = "none";
           form.reset();
         };
-
-        function closeConsumerModal() {
-          modal.style.display = "none";
-          form.reset();
-        }
-        window.closeConsumerModal = closeConsumerModal;
 
         form.onsubmit = function (e) {
           e.preventDefault();
@@ -1165,18 +1219,54 @@
             .value.toLowerCase();
           const location = document.getElementById("location").value.trim();
 
-          consumers.push({ name, type, email, phone, location, status });
-          updateTable();
-          updateCards();
-          closeConsumerModal();
+          if (!name || !type) {
+            alert("Please fill in required fields.");
+            return;
+          }
+
+          const formData = new FormData();
+          formData.append("name", name);
+          formData.append("type", type);
+          formData.append("email", email);
+          formData.append("phone", phone);
+          formData.append("location", location);
+          formData.append("status", status);
+
+          fetch("consumers.php", {
+            method: "POST",
+            body: formData,
+          })
+            .then((res) => {
+              if (!res.ok) throw new Error("Failed to submit form");
+              return res.json();
+            })
+            .then((data) => {
+              if (data.success) {
+                consumers = data.consumers.map((c) => ({
+                  name: c.name,
+                  type: c.type,
+                  email: c.email,
+                  phone: c.phone,
+                  location: c.location,
+                  status: c.status,
+                }));
+                updateTable();
+                updateCards(data.counts);
+                modal.style.display = "none";
+                form.reset();
+              } else {
+                alert(data.message || "Failed to add consumer");
+              }
+            })
+            .catch((err) => {
+              alert("Error: " + err.message);
+            });
         };
 
-        // Filtering & Searching
         searchInput.addEventListener("input", updateTable);
         typeFilter.addEventListener("change", updateTable);
         statusFilter.addEventListener("change", updateTable);
 
-        // Update table with filtered data
         function updateTable() {
           tbody.innerHTML = "";
 
@@ -1191,10 +1281,8 @@
               c.phone.toLowerCase().includes(search) ||
               c.location.toLowerCase().includes(search);
 
-            const matchesType =
-              filterType === "filter by type" || c.type === filterType;
-            const matchesStatus =
-              filterStatus === "filter by status" || c.status === filterStatus;
+            const matchesType = !filterType || c.type === filterType;
+            const matchesStatus = !filterStatus || c.status === filterStatus;
 
             if (matchesSearch && matchesType && matchesStatus) {
               const tr = document.createElement("tr");
@@ -1212,35 +1300,35 @@
           });
         }
 
-        // Update summary cards counts
-        function updateCards() {
-          const totalFarmers = consumers.filter(
-            (c) => c.type === "farmer"
-          ).length;
-          const totalSuppliers = consumers.filter(
-            (c) => c.type === "supplier"
-          ).length;
-          const totalCustomers = consumers.filter(
-            (c) => c.type === "customer"
-          ).length;
-          const newThisMonth = consumers.length; // you can adjust this logic later
-
-          countCards.farmer.textContent = totalFarmers;
-          countCards.supplier.textContent = totalSuppliers;
-          countCards.customer.textContent = totalCustomers;
-          countCards.newThisMonth.textContent = newThisMonth;
+        function updateCards(countsFromPHP) {
+          if (countsFromPHP) {
+            countCards.farmer.textContent = countsFromPHP.farmers || 0;
+            countCards.supplier.textContent = countsFromPHP.suppliers || 0;
+            countCards.customer.textContent = countsFromPHP.customers || 0;
+            countCards.newThisMonth.textContent =
+              countsFromPHP.newThisMonth || 0;
+          } else {
+            countCards.farmer.textContent = consumers.filter(
+              (c) => c.type === "farmer"
+            ).length;
+            countCards.supplier.textContent = consumers.filter(
+              (c) => c.type === "supplier"
+            ).length;
+            countCards.customer.textContent = consumers.filter(
+              (c) => c.type === "customer"
+            ).length;
+            countCards.newThisMonth.textContent = consumers.length;
+          }
         }
 
-        // Capitalize helper
         function capitalize(str) {
           if (!str) return "";
           return str.charAt(0).toUpperCase() + str.slice(1);
         }
 
-        // Initialize table and cards display
-        updateTable();
-        updateCards();
+        loadConsumers();
       }
+
       loadContent("home");
     </script>
   </body>
