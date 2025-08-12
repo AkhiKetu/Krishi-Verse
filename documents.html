@@ -1,6 +1,6 @@
 <h2>Document Management</h2>
 <p>Upload and manage supply chain documents securely.</p>
-<button class="add-btn" onclick="openUploadModal()">+ Upload Document</button>
+<button class="add-btn" id="uploadDocumentBtn">+ Upload Document</button>
 
 <!-- Stats Cards -->
 <div class="stats-cards">
@@ -54,37 +54,7 @@
       </tr>
     </thead>
     <tbody id="documentBody">
-      <!-- Sample dynamic rows for demo -->
-      <tr data-status="Pending Review" data-compliance="No" data-type="Invoice">
-        <td>Invoice #12345</td>
-        <td>Shipment #001</td>
-        <td>2025-08-01 to 2025-09-01</td>
-        <td class="status-cell">Pending Review</td>
-        <td class="compliance-cell">No</td>
-        <td>1.2 MB</td>
-        <td>
-          <button class="view-btn">View</button>
-          <button class="download-btn">Download</button>
-          <button class="review-btn">Mark Reviewed</button>
-        </td>
-      </tr>
-      <tr
-        data-status="Approved"
-        data-compliance="Yes"
-        data-type="Bill of Lading"
-      >
-        <td>Bill of Lading #7890</td>
-        <td>Shipment #002</td>
-        <td>2025-07-15 to 2025-08-15</td>
-        <td class="status-cell">Approved</td>
-        <td class="compliance-cell">Yes</td>
-        <td>800 KB</td>
-        <td>
-          <button class="view-btn">View</button>
-          <button class="download-btn">Download</button>
-          <button class="review-btn">Mark Reviewed</button>
-        </td>
-      </tr>
+      <!-- Dynamic rows go here -->
     </tbody>
   </table>
 </div>
@@ -92,31 +62,42 @@
 <!-- Upload Modal -->
 <div id="uploadModal" class="modal" style="display: none">
   <div class="modal-content">
-    <span class="close-btn" onclick="closeUploadModal()">&times;</span>
+    <span class="close-btn" id="closeUploadModal">&times;</span>
     <h3>Upload Document</h3>
-    <form id="uploadForm">
-      <label>Document Type:</label>
-      <input type="text" name="docType" required />
+    <form id="uploadForm" enctype="multipart/form-data">
+      <label for="docType">Document Type:</label>
+      <input type="text" id="docType" name="docType" required />
 
-      <label>Document Number:</label>
-      <input type="text" name="docNumber" required />
+      <label for="docNumber">Document Number:</label>
+      <input type="text" id="docNumber" name="docNumber" required />
 
-      <label>Shipment ID:</label>
-      <input type="text" name="shipmentId" required />
+      <label for="shipmentId">Shipment ID:</label>
+      <input type="text" id="shipmentId" name="shipmentId" required />
 
-      <label>Product Name:</label>
-      <input type="text" name="productName" required />
+      <label for="productName">Product Name:</label>
+      <input type="text" id="productName" name="productName" required />
 
-      <label>Distribution Center:</label>
-      <input type="text" name="distribution" required />
+      <label for="distribution">Distribution Center:</label>
+      <input type="text" id="distribution" name="distribution" required />
 
-      <label>Issue Date:</label>
-      <input type="date" name="issueDate" required />
+      <label for="issueDate">Issue Date:</label>
+      <input type="date" id="issueDate" name="issueDate" required />
 
-      <label>Expiry Date:</label>
-      <input type="date" name="expiryDate" required />
+      <label for="expiryDate">Expiry Date:</label>
+      <input type="date" id="expiryDate" name="expiryDate" required />
 
-      <button type="submit" class="save-btn">Save Document</button>
+      <label for="pdfFile">Upload PDF Document:</label>
+      <input
+        type="file"
+        id="pdfFile"
+        name="pdfFile"
+        accept="application/pdf"
+        required
+      />
+
+      <button type="submit" class="save-btn" id="saveDocumentBtn">
+        Save Document
+      </button>
     </form>
   </div>
 </div>

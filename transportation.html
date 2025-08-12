@@ -43,6 +43,7 @@
 >
   <div id="transportMap" style="height: 100%; width: 100%"></div>
 </div>
+
 <!-- Transportation Schedule Table -->
 <h3>Transportation Schedule</h3>
 <p>Planned and active transportation routes</p>
@@ -82,12 +83,11 @@
 
     <form class="schedule-form">
       <div class="form-group">
-        <select name="origin" required>
+        <select name="origin" id="originSelect" required>
           <option disabled selected>Select origin</option>
-          <option>Warehouse A</option>
-          <option>Warehouse B</option>
-          <option>Processing Hub C</option>
+          <!-- Warehouse names inserted dynamically -->
         </select>
+
         <select name="destination" required>
           <option disabled selected>Select destination</option>
           <option>Fresh Market Distribution</option>
@@ -99,12 +99,7 @@
       <div class="form-group">
         <select name="product" required>
           <option disabled selected>Select product</option>
-          <option>Organic Tomatoes</option>
-          <option>Carrots</option>
-          <option>Rice Seeds</option>
-          <option>Chili Powder</option>
-          <option>Onion</option>
-          <option>Brinjal</option>
+          <!-- Products will be loaded dynamically -->
         </select>
         <input name="weight" type="text" placeholder="e.g., 2500 kg" required />
         <input
