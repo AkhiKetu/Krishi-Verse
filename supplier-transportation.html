@@ -1,0 +1,158 @@
+<h2>Transportation Management</h2>
+<p>Plan routes, schedule deliveries, and manage vehicle fleet</p>
+<button class="schedule-btn">+ Schedule New Transport</button>
+
+<!-- Top Summary Cards -->
+<div class="summary-cards">
+  <div class="card">
+    <h3>Active Routes</h3>
+    <p class="value">0</p>
+    <p class="sub">0 scheduled for today</p>
+  </div>
+  <div class="card">
+    <h3>Available Vehicles</h3>
+    <p class="value">0</p>
+    <p class="sub">Out of total fleet</p>
+  </div>
+  <div class="card">
+    <h3>On-Time Delivery</h3>
+    <p class="value">85%</p>
+    <p class="sub">Last 30 days</p>
+  </div>
+  <div class="card">
+    <h3>Avg. Distance</h3>
+    <p class="value">o Km</p>
+    <p class="sub">Per delivery route</p>
+  </div>
+</div>
+
+<!-- Search bar for table -->
+<div class="search-container">
+  <!-- GPS Button -->
+  <button id="gpsButton">Map</button>
+  <input
+    type="text"
+    id="transportSearch"
+    placeholder="Search transportation records..."
+  />
+</div>
+<!-- GPS Map container, initially hidden -->
+<div
+  id="mapContainer"
+  style="display: none; height: 400px; width: 100%; margin-top: 20px"
+>
+  <div id="transportMap" style="height: 100%; width: 100%"></div>
+</div>
+
+<!-- Transportation Schedule Table -->
+<h3>Transportation Schedule</h3>
+<p>Planned and active transportation routes</p>
+<table class="transport-table">
+  <thead>
+    <tr>
+      <th>Route ID</th>
+      <th>Route & Product</th>
+      <th>Vehicle & Driver</th>
+      <th>Schedule</th>
+      <th>Distance & Time</th>
+      <th>Priority</th>
+      <th>Status</th>
+      <th>Costing</th>
+      <th>Temperature</th>
+      <th>Humidity</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- Rows will be dynamically added here -->
+  </tbody>
+</table>
+
+<!-- Schedule Transport Modal -->
+<div
+  id="scheduleModal"
+  class="modal"
+  tabindex="-1"
+  role="dialog"
+  aria-hidden="true"
+>
+  <div class="modal-content">
+    <span class="close" title="Close Modal">&times;</span>
+    <h2>Schedule New Transport</h2>
+    <p>Plan a new transportation route and assign vehicles</p>
+
+    <form class="schedule-form">
+      <div class="form-group">
+        <select name="origin" id="originSelect" required>
+          <option disabled selected>Select origin</option>
+          <!-- Warehouse names inserted dynamically -->
+        </select>
+
+        <select name="destination" required>
+          <option disabled selected>Select destination</option>
+          <option>Fresh Market Distribution</option>
+          <option>Retail Chain B</option>
+          <option>Processing Plant A</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <select name="product" required>
+          <option disabled selected>Select product</option>
+          <!-- Products will be loaded dynamically -->
+        </select>
+        <input name="weight" type="text" placeholder="e.g., 2500 kg" required />
+        <input
+          name="distance"
+          type="number"
+          placeholder="Distance in km"
+          required
+        />
+        <input
+          type="text"
+          name="temperature"
+          placeholder="Temperature (°C)"
+          required
+        />
+        <input
+          type="text"
+          name="humidity"
+          placeholder="Humidity (%)"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <select name="vehicle" required>
+          <option disabled selected>Select vehicle</option>
+          <option>RT-001</option>
+          <option>RT-002</option>
+          <option>DC-003</option>
+          <option>DC-004</option>
+        </select>
+        <select name="driver" required>
+          <option disabled selected>Assign driver</option>
+          <option>John Smith</option>
+          <option>Priya Das</option>
+          <option>Amit Rahman</option>
+          <option>Mehedi Hasan</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <input name="date" type="date" required />
+        <input name="time" type="time" required />
+        <select name="priority" required>
+          <option disabled selected>Priority</option>
+          <option>High</option>
+          <option>Low</option>
+        </select>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="cancel-btn">Cancel</button>
+        <button type="submit">Schedule Transport</button>
+      </div>
+    </form>
+  </div>
+</div>
