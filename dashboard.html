@@ -723,9 +723,9 @@
 
         form.elements["plantingDate"].value = cells[7].textContent;
         form.elements["harvestDate"].value = cells[8].textContent;
-        form.elements["shelfLife"].value = cells[9].textContent;
-        form.elements["storageTemp"].value = cells[10].textContent;
-        form.elements["humidity"].value = cells[11].textContent;
+        form.elements["shelfLife"].value = cells[9].textContent; // Optimise Shelf Life
+        form.elements["storageTemp"].value = cells[10].textContent; // Optimise Storage Temp
+        form.elements["humidity"].value = cells[11].textContent; // Optimise Humidity
 
         modal.style.display = "block";
       }
@@ -803,9 +803,7 @@
         );
 
         window.addEventListener("click", (e) => {
-          if (e.target === modal) {
-            modal.style.display = "none";
-          }
+          if (e.target === modal) modal.style.display = "none";
         });
 
         form.addEventListener("submit", function (e) {
@@ -820,9 +818,9 @@
             status: form.elements["status"].value,
             plantingDate: form.elements["plantingDate"].value,
             harvestDate: form.elements["harvestDate"].value,
-            shelfLife: form.elements["shelfLife"].value.trim(),
-            storageTemp: form.elements["storageTemp"].value.trim(),
-            humidity: form.elements["humidity"].value.trim(),
+            shelfLife: form.elements["shelfLife"].value.trim(), // Optimise Shelf Life
+            storageTemp: form.elements["storageTemp"].value.trim(), // Optimise Storage Temp
+            humidity: form.elements["humidity"].value.trim(), // Optimise Humidity
           };
 
           if (!data.productID || !data.productName) {
@@ -854,9 +852,9 @@
                   cells[6].textContent = data.location;
                   cells[7].textContent = data.plantingDate;
                   cells[8].textContent = data.harvestDate;
-                  cells[9].textContent = data.shelfLife;
-                  cells[10].textContent = data.storageTemp;
-                  cells[11].textContent = data.humidity;
+                  cells[9].textContent = data.shelfLife; // Optimise Shelf Life
+                  cells[10].textContent = data.storageTemp; // Optimise Storage Temp
+                  cells[11].textContent = data.humidity; // Optimise Humidity
                 } else {
                   // Add new row to table
                   const newRow = document.createElement("tr");
@@ -865,23 +863,23 @@
                       ? `<span style="background-color: #d4edda; color: #155724; padding: 4px 8px; border-radius: 15px; font-size: 12px;">In Stock</span>`
                       : `<span style="background-color: #f8d7da; color: #721c24; padding: 4px 8px; border-radius: 15px; font-size: 12px;">Stock Out</span>`;
                   newRow.innerHTML = `
-            <td>${data.productID}</td>
-            <td>${data.productName}</td>
-            <td>${data.category}</td>
-            <td>${data.price}</td>
-            <td>${data.packaging}</td>
-            <td>${statusLabel}</td>
-            <td>${data.location}</td>
-            <td>${data.plantingDate}</td>
-            <td>${data.harvestDate}</td>
-            <td>${data.shelfLife}</td>
-            <td>${data.storageTemp}</td>
-            <td>${data.humidity}</td>
-            <td>
-              <button onclick="editProduct(this)" style="padding:4px 8px;background:#ffc107;color:white;border:none;border-radius:4px;">Edit</button>
-              <button onclick="deleteProduct(this)" style="padding:4px 8px;background:#dc3545;color:white;border:none;border-radius:4px;">Delete</button>
-            </td>
-          `;
+              <td>${data.productID}</td>
+              <td>${data.productName}</td>
+              <td>${data.category}</td>
+              <td>${data.price}</td>
+              <td>${data.packaging}</td>
+              <td>${statusLabel}</td>
+              <td>${data.location}</td>
+              <td>${data.plantingDate}</td>
+              <td>${data.harvestDate}</td>
+              <td>${data.shelfLife}</td>
+              <td>${data.storageTemp}</td>
+              <td>${data.humidity}</td>
+              <td>
+                <button onclick="editProduct(this)" style="padding:4px 8px;background:#ffc107;color:white;border:none;border-radius:4px;">Edit</button>
+                <button onclick="deleteProduct(this)" style="padding:4px 8px;background:#dc3545;color:white;border:none;border-radius:4px;">Delete</button>
+              </td>
+            `;
                   tableBody.appendChild(newRow);
                   updateCategoryDropdown(data.category);
                 }
