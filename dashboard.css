@@ -1190,6 +1190,7 @@ button {
 .priority.low {
   background-color: #f39c12;
 }
+
 /* Transport Table */
 .transport-table {
   width: 100%;
@@ -1198,6 +1199,11 @@ button {
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.transport-table thead {
+  background: #176ec6; /* Blue header */
+  color: white;
 }
 
 .transport-table th,
@@ -1209,11 +1215,10 @@ button {
 }
 
 .transport-table th {
-  background: #f0f3f6;
   font-weight: 600;
 }
 
-/* Modal Styles */
+/* Modal Styles - Fully Responsive */
 .modal {
   display: none;
   position: fixed;
@@ -1227,17 +1232,17 @@ button {
 
 .modal-content {
   background: white;
-  margin: 2% auto;
-  padding: 20px;
-  width: 90%; /* Increased from 600px */
-  max-width: 1200px; /* Allow bigger space */
-  max-height: 90vh; /* So it fits screen height */
-  overflow-y: auto; /* Scroll if content is too tall */
+  width: 100%;
+  max-width: 1000px; /* max width for large screens */
+  max-height: 90vh;  /* fits within viewport height */
+  overflow-y: auto;
   border-radius: 12px;
-  position: relative;
+  padding: 20px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
 }
 
+/* Close Button */
 .close {
   position: absolute;
   right: 20px;
@@ -1246,6 +1251,7 @@ button {
   cursor: pointer;
 }
 
+/* Schedule Form */
 .schedule-form .form-group {
   display: flex;
   gap: 10px;
@@ -1269,6 +1275,7 @@ button {
   margin-bottom: 15px;
 }
 
+/* Modal Actions */
 .modal-actions {
   display: flex;
   justify-content: flex-end;
@@ -1292,6 +1299,7 @@ button {
   background-color: #ccc;
   color: #333;
 }
+
 /* Search Bar Styles */
 .search-container {
   margin: 15px 0;
@@ -1311,7 +1319,8 @@ button {
   box-shadow: 0 0 4px rgba(46, 204, 113, 0.4);
   outline: none;
 }
-/* GPS Button Styling */
+
+/* GPS Button */
 #gpsButton {
   background-color: #33d838;
   color: white;
@@ -1332,8 +1341,10 @@ button {
 #gpsButton:active {
   transform: scale(0.98);
 }
+
+/* Map Container */
 #mapContainer {
-  display: none; /* initially hidden */
+  display: none;
   height: 400px;
   width: 100%;
   margin-top: 20px;
@@ -1343,6 +1354,7 @@ button {
   height: 100%;
   width: 100%;
 }
+
 
 /*document.css */
 /* Fix button class to match HTML */
@@ -1551,7 +1563,6 @@ button {
     flex-direction: column;
   }
 }
-
 /* inventory.css */
 
 /* General Styles */
@@ -1570,20 +1581,6 @@ h2 {
 p {
   margin-bottom: 20px;
   color: #555;
-}
-/* New Inventory Button */
-#addInventoryBtn {
-  background: #28a745; /* green color */
-  color: #fff;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-#addInventoryBtn:hover {
-  background: #218838; /* darker green on hover */
 }
 
 /* Action Bar */
