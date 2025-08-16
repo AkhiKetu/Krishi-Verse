@@ -1,0 +1,64 @@
+<h2>Inventory Management</h2>
+<p>Manage your product inventory across warehouses</p>
+
+<!-- Action Bar -->
+<div class="actions-bar">
+  <input id="inventorySearch" type="text" placeholder="Search inventory..." />
+  <button id="addInventoryBtn">+ New Inventory</button>
+</div>
+
+<!-- Inventory Table -->
+<div class="table-container">
+  <h3>Inventory Records</h3>
+  <table id="inventoryTable">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Product</th>
+        <th>Main Storage</th>
+        <th>Warehouse</th>
+        <th>In Warehouse</th>
+        <th>Last Available</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Dynamic rows loaded by JS -->
+    </tbody>
+  </table>
+</div>
+
+<!-- Add/Edit Inventory Modal -->
+<div id="inventoryModal" class="modal">
+  <div class="modal-content">
+    <span id="closeInventoryModal" class="close">&times;</span>
+    <h3>Add/Edit Inventory</h3>
+    <form id="inventoryForm">
+      <input type="hidden" name="id" id="inventoryID" />
+
+      <label for="productSelect">Product</label>
+      <select name="product" id="productSelect" required>
+        <option value="" disabled selected>Select Product</option>
+      </select>
+
+      <label for="mainStorage">Main Storage (kg)</label>
+      <input type="number" name="mainStorage" id="mainStorage" placeholder="e.g., 1000" step="0.01" required />
+
+      <label for="warehouseSelect">Warehouse</label>
+      <select name="warehouse" id="warehouseSelect" required>
+        <option value="" disabled selected>Select Warehouse</option>
+      </select>
+
+      <label for="inWarehouse">In Warehouse (kg)</label>
+      <input type="number" name="inWarehouse" id="inWarehouse" step="0.01" required />
+
+      <label for="lastAvailable">Last Available (kg)</label>
+      <input type="number" name="lastAvailable" id="lastAvailable" step="0.01" readonly />
+
+      <div class="modal-actions">
+        <button type="button" class="cancel-btn">Cancel</button>
+        <button type="submit">Save Inventory</button>
+      </div>
+    </form>
+  </div>
+</div>
