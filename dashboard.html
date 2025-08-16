@@ -318,12 +318,7 @@
         );
 
         const vehicleList = ["RT-001", "RT-002", "DC-003", "DC-004"];
-
-        // Search bar
         const searchInput = document.getElementById("transportSearch");
-
-        // GPS Map elements
-        const gpsButton = document.getElementById("gpsButton");
         const mapContainer = document.getElementById("mapContainer");
         let map = null;
         let mapInitialized = false;
@@ -335,12 +330,11 @@
 
         let transports = [];
 
-        // Load origin warehouses into origin select dropdown
+        // Load origin warehouses
         function loadOriginWarehouses() {
           const originSelect = form.origin;
           originSelect.innerHTML =
             "<option disabled selected>Select origin</option>";
-
           return fetch("transportation.php?warehouses=1")
             .then((res) => res.json())
             .then((data) => {
@@ -351,19 +345,16 @@
                   option.value = name;
                   originSelect.appendChild(option);
                 });
-              } else {
-                alert("Failed to load warehouse data.");
-              }
+              } else alert("Failed to load warehouse data.");
             })
             .catch(() => alert("Error loading warehouse data."));
         }
 
-        // Load products into product select dropdown
+        // Load products
         function loadProducts() {
           const productSelect = form.product;
           productSelect.innerHTML =
             "<option disabled selected>Select product</option>";
-
           return fetch("transportation.php?products=1")
             .then((res) => res.json())
             .then((data) => {
@@ -374,14 +365,12 @@
                   option.value = productName;
                   productSelect.appendChild(option);
                 });
-              } else {
-                alert("Failed to load product data.");
-              }
+              } else alert("Failed to load product data.");
             })
             .catch(() => alert("Error loading product data."));
         }
 
-        // Open modal to add new transport
+        // Open modal
         scheduleBtn.onclick = () => {
           form.reset();
           form.setAttribute("data-editing", "false");
@@ -391,24 +380,16 @@
           modal.style.display = "block";
         };
 
-        // Close modal if clicked outside content
+        // Close modal
         modal.addEventListener("click", (e) => {
-          if (e.target === modal) {
-            modal.style.display = "none";
-          }
+          if (e.target === modal) modal.style.display = "none";
         });
+        modal.querySelector(".close").onclick = () =>
+          (modal.style.display = "none");
+        form.querySelector(".cancel-btn").onclick = () =>
+          (modal.style.display = "none");
 
-        // Close modal on (x) click
-        modal.querySelector(".close").onclick = () => {
-          modal.style.display = "none";
-        };
-
-        // Close modal on cancel button
-        form.querySelector(".cancel-btn").onclick = () => {
-          modal.style.display = "none";
-        };
-
-        // Render all transports in table
+        // Render transports
         function renderTransports() {
           tableBody.innerHTML = "";
           transports.forEach((t) => {
@@ -429,10 +410,13 @@
             const cost = `${t.costing.toFixed(2)} BDT`;
 
             const row = document.createElement("tr");
-            row.dataset.id = t.id; // Use actual id here
+            row.dataset.id = t.id;
             row.innerHTML = `
         <td>${routeId}</td>
         <td>${routeText}</td>
+        <td>
+          <button class="map-btn" data-origin="${t.origin}" data-destination="${t.destination}">Map</button>
+        </td>
         <td>${vehicleDriver}</td>
         <td>${scheduleText}</td>
         <td>${distance}</td>
@@ -448,12 +432,14 @@
       `;
             tableBody.appendChild(row);
           });
+
           bindEditDeleteButtons();
+          bindMapButtons();
           updateSummaryCards();
           updateFleetStatus();
         }
 
-        // Fetch transports + stats from backend
+        // Load transports
         function loadTransports() {
           fetch("transportation.php")
             .then((res) => res.json())
@@ -465,17 +451,14 @@
                 summaryScheduledToday.textContent = `${data.stats.scheduledToday} scheduled for today`;
                 availableVehiclesCount.textContent =
                   data.stats.availableVehicles;
-              } else {
-                alert("Failed to load transport data.");
-              }
+              } else alert("Failed to load transport data.");
             })
             .catch(() => alert("Error loading transport data."));
         }
 
-        // Handle form submit (Add or Edit transport)
-        form.onsubmit = function (e) {
+        // Handle add/edit form
+        form.onsubmit = (e) => {
           e.preventDefault();
-
           const origin = form.origin.value.trim();
           const destination = form.destination.value.trim();
           const product = form.product.value;
@@ -520,8 +503,6 @@
             humidity,
             distance: distanceKm,
           });
-
-          // If editing, add action=update and id
           if (form.getAttribute("data-editing") === "true" && form.editingRow) {
             postData.append("action", "update");
             postData.append("id", form.editingRow.dataset.id);
@@ -545,14 +526,13 @@
                 form.reset();
                 form.setAttribute("data-editing", "false");
                 form.editingRow = null;
-              } else {
+              } else
                 alert(data.message || "Failed to save transportation record.");
-              }
             })
             .catch(() => alert("Error submitting transportation record."));
         };
 
-        // Bind Edit and Delete buttons
+        // Bind edit/delete
         function bindEditDeleteButtons() {
           tableBody.querySelectorAll(".edit-btn").forEach((btn) => {
             btn.onclick = (e) => {
@@ -573,27 +553,25 @@
               form.setAttribute("data-editing", "true");
               form.editingRow = row;
 
-              // Load warehouses and products before setting values
               Promise.all([loadOriginWarehouses(), loadProducts()]).then(() => {
                 form.origin.value = originText;
                 form.destination.value = destinationText;
                 form.product.value = productName;
                 form.weight.value = weight;
-                form.vehicle.value = cells[2].innerText
+                form.vehicle.value = cells[3].innerText
                   .split("\n")[0]
                   .replace("🚛 ", "")
                   .trim();
-                form.driver.value = cells[2].innerText
+                form.driver.value = cells[3].innerText
                   .split("\n")[1]
                   .replace("👤 ", "")
                   .trim();
-                form.date.value = cells[3].innerText.split("\n")[0];
-                form.time.value = cells[3].innerText.split("\n")[1];
-                form.priority.value = cells[5].innerText.trim();
-                form.distance.value = parseFloat(cells[4].innerText) || "";
+                form.date.value = cells[4].innerText.split("\n")[0];
+                form.time.value = cells[4].innerText.split("\n")[1];
+                form.priority.value = cells[6].innerText.trim();
+                form.distance.value = parseFloat(cells[5].innerText) || "";
                 form.temperature.value = cells[8].innerText;
                 form.humidity.value = cells[9].innerText;
-
                 modal.style.display = "block";
               });
             };
@@ -604,7 +582,6 @@
               if (confirm("Are you sure you want to delete this route?")) {
                 const row = e.target.closest("tr");
                 const id = row.dataset.id;
-
                 fetch("transportation.php", {
                   method: "POST",
                   headers: {
@@ -624,12 +601,11 @@
                       summaryScheduledToday.textContent = `${data.stats.scheduledToday} scheduled for today`;
                       availableVehiclesCount.textContent =
                         data.stats.availableVehicles;
-                    } else {
+                    } else
                       alert(
                         data.message ||
                           "Failed to delete transportation record."
                       );
-                    }
                   })
                   .catch(() => alert("Error deleting transportation record."));
               }
@@ -637,26 +613,58 @@
           });
         }
 
-        // Update summary cards (local calculation)
+        // Bind Map buttons
+        function bindMapButtons() {
+          tableBody.querySelectorAll(".map-btn").forEach((btn) => {
+            btn.onclick = () => {
+              const origin = btn.dataset.origin;
+              const destination = btn.dataset.destination;
+
+              if (
+                mapContainer.style.display === "none" ||
+                !mapContainer.style.display
+              ) {
+                mapContainer.style.display = "block";
+
+                if (!mapInitialized) {
+                  map = L.map("transportMap").setView([23.685, 90.3563], 7);
+                  L.tileLayer(
+                    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                    {
+                      attribution:
+                        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                    }
+                  ).addTo(map);
+                  mapInitialized = true;
+                } else map.invalidateSize();
+
+                // Plot route
+                plotRoute(origin, destination);
+              } else {
+                mapContainer.style.display = "none";
+              }
+            };
+          });
+        }
+
+        // Update summary cards
         function updateSummaryCards() {
           const rows = tableBody.querySelectorAll("tr");
           const today = new Date().toISOString().split("T")[0];
           let scheduledToday = 0;
-
           rows.forEach((row) => {
-            const scheduleDate = row.cells[3].innerText.split("\n")[0];
+            const scheduleDate = row.cells[4].innerText.split("\n")[0];
             if (scheduleDate === today) scheduledToday++;
           });
-
           summaryActiveRoutes.textContent = rows.length;
           summaryScheduledToday.textContent = `${scheduledToday} scheduled for today`;
         }
 
-        // Update available vehicles count (local calculation)
+        // Update fleet status
         function updateFleetStatus() {
           const usedVehicles = Array.from(tableBody.querySelectorAll("tr")).map(
             (row) =>
-              row.cells[2].innerText.split("\n")[0].replace("🚛 ", "").trim()
+              row.cells[3].innerText.split("\n")[0].replace("🚛 ", "").trim()
           );
           const available = vehicleList.filter(
             (v) => !usedVehicles.includes(v)
@@ -664,51 +672,22 @@
           availableVehiclesCount.textContent = available.length;
         }
 
-        // Search functionality
+        // Search
         if (searchInput) {
           searchInput.addEventListener("keyup", () => {
             const filter = searchInput.value.toLowerCase();
-            const rows = tableBody.getElementsByTagName("tr");
-            Array.from(rows).forEach((row) => {
+            Array.from(tableBody.getElementsByTagName("tr")).forEach((row) => {
               const text = row.innerText.toLowerCase();
               row.style.display = text.includes(filter) ? "" : "none";
             });
           });
         }
 
-        // GPS Map toggle and initialization
-        if (gpsButton && mapContainer) {
-          gpsButton.addEventListener("click", function () {
-            if (
-              mapContainer.style.display === "none" ||
-              !mapContainer.style.display
-            ) {
-              mapContainer.style.display = "block";
-
-              if (!mapInitialized) {
-                map = L.map("transportMap").setView([23.685, 90.3563], 7);
-                L.tileLayer(
-                  "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                  {
-                    attribution:
-                      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-                  }
-                ).addTo(map);
-                mapInitialized = true;
-              } else {
-                map.invalidateSize();
-              }
-            } else {
-              mapContainer.style.display = "none";
-            }
-          });
-        }
-
-        // Initial load from backend
+        // Initial load
         loadTransports();
       }
 
-      // Initialize after DOM loads
+      // Initialize
       document.addEventListener("DOMContentLoaded", () => {
         initTransportationPage();
       });
