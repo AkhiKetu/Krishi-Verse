@@ -66,7 +66,9 @@ function getTransportAndStats($conn) {
     $totalRoutes = (int)$conn->query("SELECT COUNT(*) FROM transportation")->fetch_row()[0];
     $today = date('Y-m-d');
     $scheduledToday = (int)$conn->query("SELECT COUNT(*) FROM transportation WHERE schedule_date = '$today'")->fetch_row()[0];
-    $availableVehicles = 4 - (int)$conn->query("SELECT COUNT(DISTINCT vehicle) FROM transportation WHERE status = 'Scheduled'")->fetch_row()[0];
+
+    // availableVehicles will be calculated in JS
+    $availableVehicles = 0;
 
     return [
         'success' => true,
@@ -74,7 +76,7 @@ function getTransportAndStats($conn) {
         'stats' => [
             'totalRoutes' => $totalRoutes,
             'scheduledToday' => $scheduledToday,
-            'availableVehicles' => max($availableVehicles, 0),
+            'availableVehicles' => $availableVehicles,
         ]
     ];
 }

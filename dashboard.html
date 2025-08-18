@@ -323,16 +323,22 @@
           ".summary-cards .card:nth-child(2) .value"
         );
 
-        const vehicleList = ["RT-001", "RT-002", "DC-003", "DC-004"];
+        const vehicleList = [
+          "RT-001",
+          "RT-002",
+          "DC-003",
+          "DC-004",
+          "DC-005",
+          "DC-006",
+          "DC-007",
+        ];
         const searchInput = document.getElementById("transportSearch");
         const mapContainer = document.getElementById("mapContainer");
         let map = null;
         let mapInitialized = false;
 
-        if (!modal || !scheduleBtn || !form || !tableBody) {
-          console.warn("Transportation page elements not found.");
-          return;
-        }
+        if (!modal || !scheduleBtn || !form || !tableBody)
+          return console.warn("Transportation page elements not found.");
 
         let transports = [];
 
@@ -365,10 +371,10 @@
             .then((res) => res.json())
             .then((data) => {
               if (data.success) {
-                data.products.forEach((productName) => {
+                data.products.forEach((name) => {
                   const option = document.createElement("option");
-                  option.textContent = productName;
-                  option.value = productName;
+                  option.textContent = name;
+                  option.value = name;
                   productSelect.appendChild(option);
                 });
               } else alert("Failed to load product data.");
@@ -381,9 +387,9 @@
           form.reset();
           form.setAttribute("data-editing", "false");
           form.editingRow = null;
-          loadOriginWarehouses();
-          loadProducts();
-          modal.style.display = "block";
+          Promise.all([loadOriginWarehouses(), loadProducts()]).then(
+            () => (modal.style.display = "block")
+          );
         };
 
         // Close modal
@@ -420,9 +426,7 @@
             row.innerHTML = `
         <td>${routeId}</td>
         <td>${routeText}</td>
-        <td>
-          <button class="map-btn" data-origin="${t.origin}" data-destination="${t.destination}">Map</button>
-        </td>
+        <td><button class="map-btn" data-origin="${t.origin}" data-destination="${t.destination}">Map</button></td>
         <td>${vehicleDriver}</td>
         <td>${scheduleText}</td>
         <td>${distance}</td>
@@ -434,8 +438,7 @@
         <td>
           <button class="edit-btn">Edit</button>
           <button class="delete-btn">Delete</button>
-        </td>
-      `;
+        </td>`;
             tableBody.appendChild(row);
           });
 
@@ -453,10 +456,6 @@
               if (data.success) {
                 transports = data.transports;
                 renderTransports();
-                summaryActiveRoutes.textContent = data.stats.totalRoutes;
-                summaryScheduledToday.textContent = `${data.stats.scheduledToday} scheduled for today`;
-                availableVehiclesCount.textContent =
-                  data.stats.availableVehicles;
               } else alert("Failed to load transport data.");
             })
             .catch(() => alert("Error loading transport data."));
@@ -465,50 +464,21 @@
         // Handle add/edit form
         form.onsubmit = (e) => {
           e.preventDefault();
-          const origin = form.origin.value.trim();
-          const destination = form.destination.value.trim();
-          const product = form.product.value;
-          const weight = form.weight.value.trim();
-          const vehicle = form.vehicle.value;
-          const driver = form.driver.value;
-          const date = form.date.value;
-          const time = form.time.value;
-          const priority = form.priority.value;
-          const temperature = form.temperature.value;
-          const humidity = form.humidity.value;
-          const distanceKm = parseFloat(form.distance.value) || 0;
-
-          if (
-            !origin ||
-            !destination ||
-            !product ||
-            !weight ||
-            !vehicle ||
-            !driver ||
-            !date ||
-            !time ||
-            !priority ||
-            !temperature ||
-            !humidity
-          ) {
-            alert("Please fill in all required fields.");
-            return;
-          }
-
           const postData = new URLSearchParams({
-            origin,
-            destination,
-            product,
-            weight,
-            vehicle,
-            driver,
-            date,
-            time,
-            priority,
-            temperature,
-            humidity,
-            distance: distanceKm,
+            origin: form.origin.value.trim(),
+            destination: form.destination.value.trim(),
+            product: form.product.value,
+            weight: form.weight.value.trim(),
+            vehicle: form.vehicle.value,
+            driver: form.driver.value,
+            date: form.date.value,
+            time: form.time.value,
+            priority: form.priority.value,
+            temperature: form.temperature.value,
+            humidity: form.humidity.value,
+            distance: parseFloat(form.distance.value) || 0,
           });
+
           if (form.getAttribute("data-editing") === "true" && form.editingRow) {
             postData.append("action", "update");
             postData.append("id", form.editingRow.dataset.id);
@@ -524,10 +494,6 @@
               if (data.success) {
                 transports = data.transports;
                 renderTransports();
-                summaryActiveRoutes.textContent = data.stats.totalRoutes;
-                summaryScheduledToday.textContent = `${data.stats.scheduledToday} scheduled for today`;
-                availableVehiclesCount.textContent =
-                  data.stats.availableVehicles;
                 modal.style.display = "none";
                 form.reset();
                 form.setAttribute("data-editing", "false");
@@ -540,54 +506,56 @@
 
         // Bind edit/delete
         function bindEditDeleteButtons() {
-          tableBody.querySelectorAll(".edit-btn").forEach((btn) => {
-            btn.onclick = (e) => {
-              const row = e.target.closest("tr");
-              const cells = row.querySelectorAll("td");
-
-              const html = cells[1].innerHTML;
-              const [routePart, productPart] = html.split("<br><small>");
-              const [originText, destinationText] = routePart
-                .split("→")
-                .map((s) => s.trim());
-              const productName = productPart
-                .replace(")</small>", "")
-                .split("(")[0]
-                .trim();
-              const weight = productPart.match(/\(([^)]+)\)/)[1];
-
-              form.setAttribute("data-editing", "true");
-              form.editingRow = row;
-
-              Promise.all([loadOriginWarehouses(), loadProducts()]).then(() => {
-                form.origin.value = originText;
-                form.destination.value = destinationText;
-                form.product.value = productName;
-                form.weight.value = weight;
-                form.vehicle.value = cells[3].innerText
-                  .split("\n")[0]
-                  .replace("🚛 ", "")
-                  .trim();
-                form.driver.value = cells[3].innerText
-                  .split("\n")[1]
-                  .replace("👤 ", "")
-                  .trim();
-                form.date.value = cells[4].innerText.split("\n")[0];
-                form.time.value = cells[4].innerText.split("\n")[1];
-                form.priority.value = cells[6].innerText.trim();
-                form.distance.value = parseFloat(cells[5].innerText) || "";
-                form.temperature.value = cells[8].innerText;
-                form.humidity.value = cells[9].innerText;
-                modal.style.display = "block";
-              });
-            };
-          });
-
-          tableBody.querySelectorAll(".delete-btn").forEach((btn) => {
-            btn.onclick = (e) => {
-              if (confirm("Are you sure you want to delete this route?")) {
+          tableBody.querySelectorAll(".edit-btn").forEach(
+            (btn) =>
+              (btn.onclick = (e) => {
                 const row = e.target.closest("tr");
-                const id = row.dataset.id;
+                const cells = row.querySelectorAll("td");
+                const [routePart, productPart] =
+                  cells[1].innerHTML.split("<br><small>");
+                const [originText, destinationText] = routePart
+                  .split("→")
+                  .map((s) => s.trim());
+                const productName = productPart
+                  .replace(")</small>", "")
+                  .split("(")[0]
+                  .trim();
+                const weight = productPart.match(/\(([^)]+)\)/)[1];
+
+                form.setAttribute("data-editing", "true");
+                form.editingRow = row;
+                Promise.all([loadOriginWarehouses(), loadProducts()]).then(
+                  () => {
+                    form.origin.value = originText;
+                    form.destination.value = destinationText;
+                    form.product.value = productName;
+                    form.weight.value = weight;
+                    form.vehicle.value = cells[3].innerText
+                      .split("\n")[0]
+                      .replace("🚛 ", "")
+                      .trim();
+                    form.driver.value = cells[3].innerText
+                      .split("\n")[1]
+                      .replace("👤 ", "")
+                      .trim();
+                    form.date.value = cells[4].innerText.split("\n")[0];
+                    form.time.value = cells[4].innerText.split("\n")[1];
+                    form.priority.value = cells[6].innerText.trim();
+                    form.distance.value = parseFloat(cells[5].innerText) || "";
+                    form.temperature.value = cells[9].innerText;
+                    form.humidity.value = cells[10].innerText;
+                    modal.style.display = "block";
+                  }
+                );
+              })
+          );
+
+          tableBody.querySelectorAll(".delete-btn").forEach(
+            (btn) =>
+              (btn.onclick = (e) => {
+                if (!confirm("Are you sure you want to delete this route?"))
+                  return;
+                const row = e.target.closest("tr");
                 fetch("transportation.php", {
                   method: "POST",
                   headers: {
@@ -595,7 +563,7 @@
                   },
                   body: new URLSearchParams({
                     action: "delete",
-                    id,
+                    id: row.dataset.id,
                   }).toString(),
                 })
                   .then((res) => res.json())
@@ -603,10 +571,6 @@
                     if (data.success) {
                       transports = data.transports;
                       renderTransports();
-                      summaryActiveRoutes.textContent = data.stats.totalRoutes;
-                      summaryScheduledToday.textContent = `${data.stats.scheduledToday} scheduled for today`;
-                      availableVehiclesCount.textContent =
-                        data.stats.availableVehicles;
                     } else
                       alert(
                         data.message ||
@@ -614,22 +578,17 @@
                       );
                   })
                   .catch(() => alert("Error deleting transportation record."));
-              }
-            };
-          });
+              })
+          );
         }
 
         // Bind Map buttons
         function bindMapButtons() {
-          tableBody.querySelectorAll(".map-btn").forEach((btn) => {
-            btn.onclick = () => {
-              const origin = btn.dataset.origin;
-              const destination = btn.dataset.destination;
-
-              if (
-                mapContainer.style.display === "none" ||
-                !mapContainer.style.display
-              ) {
+          tableBody.querySelectorAll(".map-btn").forEach(
+            (btn) =>
+              (btn.onclick = () => {
+                const origin = btn.dataset.origin;
+                const destination = btn.dataset.destination;
                 mapContainer.style.display = "block";
 
                 if (!mapInitialized) {
@@ -644,13 +603,9 @@
                   mapInitialized = true;
                 } else map.invalidateSize();
 
-                // Plot route
                 plotRoute(origin, destination);
-              } else {
-                mapContainer.style.display = "none";
-              }
-            };
-          });
+              })
+          );
         }
 
         // Update summary cards
@@ -659,8 +614,8 @@
           const today = new Date().toISOString().split("T")[0];
           let scheduledToday = 0;
           rows.forEach((row) => {
-            const scheduleDate = row.cells[4].innerText.split("\n")[0];
-            if (scheduleDate === today) scheduledToday++;
+            if (row.cells[4].innerText.split("\n")[0] === today)
+              scheduledToday++;
           });
           summaryActiveRoutes.textContent = rows.length;
           summaryScheduledToday.textContent = `${scheduledToday} scheduled for today`;
@@ -683,8 +638,9 @@
           searchInput.addEventListener("keyup", () => {
             const filter = searchInput.value.toLowerCase();
             Array.from(tableBody.getElementsByTagName("tr")).forEach((row) => {
-              const text = row.innerText.toLowerCase();
-              row.style.display = text.includes(filter) ? "" : "none";
+              row.style.display = row.innerText.toLowerCase().includes(filter)
+                ? ""
+                : "none";
             });
           });
         }
@@ -694,9 +650,7 @@
       }
 
       // Initialize
-      document.addEventListener("DOMContentLoaded", () => {
-        initTransportationPage();
-      });
+      document.addEventListener("DOMContentLoaded", initTransportationPage);
 
       // ---------- Product Page Logic ----------
 
@@ -1023,10 +977,10 @@
           );
           form.elements["inWarehouse"].value = parseFloat(
             cells[4].textContent.replace(" Kg", "")
-          );
+          ); // Packed
           form.elements["lastAvailable"].value = parseFloat(
             cells[5].textContent.replace(" Kg", "")
-          );
+          ); // Unpacked
           modal.style.display = "block";
         });
       }
@@ -1094,23 +1048,20 @@
           if (e.target === modal) modal.style.display = "none";
         });
 
-        // Auto-calculate last available
-        function calculateLastAvailable() {
+        // Auto-calculate Unpacked (previously Last Available)
+        function calculateUnpacked() {
           const main = parseFloat(form.elements["mainStorage"].value) || 0;
-          const inWarehouse =
-            parseFloat(form.elements["inWarehouse"].value) || 0;
-          form.elements["lastAvailable"].value = (main - inWarehouse).toFixed(
-            2
-          );
+          const packed = parseFloat(form.elements["inWarehouse"].value) || 0; // Previously In Warehouse
+          form.elements["lastAvailable"].value = (main - packed).toFixed(2);
         }
 
         form.elements["mainStorage"].addEventListener(
           "input",
-          calculateLastAvailable
+          calculateUnpacked
         );
         form.elements["inWarehouse"].addEventListener(
           "input",
-          calculateLastAvailable
+          calculateUnpacked
         );
 
         // Submit add/edit form
@@ -1123,8 +1074,8 @@
             product_id: form.elements["product"].value,
             warehouse_id: form.elements["warehouse"].value,
             main_storage: parseFloat(form.elements["mainStorage"].value),
-            in_warehouse: parseFloat(form.elements["inWarehouse"].value),
-            last_available: parseFloat(form.elements["lastAvailable"].value),
+            in_warehouse: parseFloat(form.elements["inWarehouse"].value), // Packed
+            last_available: parseFloat(form.elements["lastAvailable"].value), // Unpacked
           };
 
           if (!data.product_id || !data.warehouse_id) {
@@ -1174,12 +1125,12 @@
                 const row = document.createElement("tr");
                 row.dataset.id = i.id;
                 row.innerHTML = `
-            <td>${i.id}</td>
+            <td>${i.id}</td> <!-- Batch ID -->
             <td data-id="${i.product_id}">${i.productName}</td>
             <td>${i.main_storage} Kg</td>
             <td data-id="${i.warehouse_id}">${i.warehouseName}</td>
-            <td>${i.in_warehouse} Kg</td>
-            <td>${i.last_available} Kg</td>
+            <td>${i.in_warehouse} Kg</td> <!-- Packed -->
+            <td>${i.last_available} Kg</td> <!-- Unpacked -->
             <td>
               <button onclick="editInventory(this)" style="padding:4px 8px;background:#ffc107;color:white;border:none;border-radius:4px;">Edit</button>
               <button onclick="deleteInventory(this)" style="padding:4px 8px;background:#dc3545;color:white;border:none;border-radius:4px;">Delete</button>
