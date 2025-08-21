@@ -416,9 +416,8 @@
             const priorityTag = `<span class="priority ${t.priority.toLowerCase()}">${
               t.priority
             }</span>`;
-            const statusTag = `<span class="status ${t.status.toLowerCase()}">${
-              t.status
-            }</span>`;
+            const statusText = t.status ? t.status : "Scheduled";
+            const statusTag = `<span class="status ${statusText.toLowerCase()}">${statusText}</span>`;
             const cost = `${t.costing.toFixed(2)} BDT`;
 
             const row = document.createElement("tr");
@@ -433,8 +432,8 @@
         <td>${priorityTag}</td>
         <td>${statusTag}</td>
         <td>${cost}</td>
-        <td>${t.temperature}</td>
-        <td>${t.humidity}</td>
+        <td>${t.temperature}°C</td>
+        <td>${t.humidity}%</td>
         <td>
           <button class="edit-btn">Edit</button>
           <button class="delete-btn">Delete</button>
@@ -461,7 +460,7 @@
             .catch(() => alert("Error loading transport data."));
         }
 
-        // Handle add/edit form
+        // Add/Edit form
         form.onsubmit = (e) => {
           e.preventDefault();
           const postData = new URLSearchParams({
@@ -504,111 +503,124 @@
             .catch(() => alert("Error submitting transportation record."));
         };
 
-        // Bind edit/delete
+        // Bind Edit/Delete buttons
         function bindEditDeleteButtons() {
-          tableBody.querySelectorAll(".edit-btn").forEach(
-            (btn) =>
-              (btn.onclick = (e) => {
-                const row = e.target.closest("tr");
-                const cells = row.querySelectorAll("td");
-                const [routePart, productPart] =
-                  cells[1].innerHTML.split("<br><small>");
-                const [originText, destinationText] = routePart
-                  .split("→")
-                  .map((s) => s.trim());
-                const productName = productPart
-                  .replace(")</small>", "")
-                  .split("(")[0]
+          tableBody.querySelectorAll(".edit-btn").forEach((btn) => {
+            btn.onclick = (e) => {
+              const row = e.target.closest("tr");
+              const cells = row.querySelectorAll("td");
+              const routeParts = cells[1].innerText
+                .split("→")
+                .map((s) => s.trim());
+              const [originText, destinationText] = routeParts;
+              const productPart = cells[1].querySelector("small").innerText;
+              const [productName, weightRaw] = productPart.split("(");
+              const weight = weightRaw.replace(")", "").trim();
+
+              form.setAttribute("data-editing", "true");
+              form.editingRow = row;
+
+              Promise.all([loadOriginWarehouses(), loadProducts()]).then(() => {
+                form.origin.value = originText;
+                form.destination.value = destinationText;
+                form.product.value = productName.trim();
+                form.weight.value = weight;
+                form.vehicle.value = cells[3].innerText
+                  .split("\n")[0]
+                  .replace("🚛 ", "");
+                form.driver.value = cells[3].innerText
+                  .split("\n")[1]
+                  .replace("👤 ", "");
+
+                const scheduleParts = cells[4].innerText.split("\n");
+                form.date.value = scheduleParts[0].trim();
+                form.time.value = scheduleParts[1]?.trim() || "";
+
+                form.priority.value = cells[6].innerText.trim();
+                form.distance.value = parseFloat(cells[5].innerText) || 0;
+                form.temperature.value = cells[9].innerText
+                  .replace("°C", "")
                   .trim();
-                const weight = productPart.match(/\(([^)]+)\)/)[1];
+                form.humidity.value = cells[10].innerText
+                  .replace("%", "")
+                  .trim();
+                modal.style.display = "block";
+              });
+            };
+          });
 
-                form.setAttribute("data-editing", "true");
-                form.editingRow = row;
-                Promise.all([loadOriginWarehouses(), loadProducts()]).then(
-                  () => {
-                    form.origin.value = originText;
-                    form.destination.value = destinationText;
-                    form.product.value = productName;
-                    form.weight.value = weight;
-                    form.vehicle.value = cells[3].innerText
-                      .split("\n")[0]
-                      .replace("🚛 ", "")
-                      .trim();
-                    form.driver.value = cells[3].innerText
-                      .split("\n")[1]
-                      .replace("👤 ", "")
-                      .trim();
-                    form.date.value = cells[4].innerText.split("\n")[0];
-                    form.time.value = cells[4].innerText.split("\n")[1];
-                    form.priority.value = cells[6].innerText.trim();
-                    form.distance.value = parseFloat(cells[5].innerText) || "";
-                    form.temperature.value = cells[9].innerText;
-                    form.humidity.value = cells[10].innerText;
-                    modal.style.display = "block";
-                  }
-                );
+          tableBody.querySelectorAll(".delete-btn").forEach((btn) => {
+            btn.onclick = (e) => {
+              if (!confirm("Are you sure you want to delete this route?"))
+                return;
+              const row = e.target.closest("tr");
+              fetch("transportation.php", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: new URLSearchParams({
+                  action: "delete",
+                  id: row.dataset.id,
+                }).toString(),
               })
-          );
-
-          tableBody.querySelectorAll(".delete-btn").forEach(
-            (btn) =>
-              (btn.onclick = (e) => {
-                if (!confirm("Are you sure you want to delete this route?"))
-                  return;
-                const row = e.target.closest("tr");
-                fetch("transportation.php", {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                  },
-                  body: new URLSearchParams({
-                    action: "delete",
-                    id: row.dataset.id,
-                  }).toString(),
+                .then((res) => res.json())
+                .then((data) => {
+                  if (data.success) {
+                    transports = data.transports;
+                    renderTransports();
+                  } else
+                    alert(
+                      data.message || "Failed to delete transportation record."
+                    );
                 })
-                  .then((res) => res.json())
-                  .then((data) => {
-                    if (data.success) {
-                      transports = data.transports;
-                      renderTransports();
-                    } else
-                      alert(
-                        data.message ||
-                          "Failed to delete transportation record."
-                      );
-                  })
-                  .catch(() => alert("Error deleting transportation record."));
-              })
-          );
+                .catch(() => alert("Error deleting transportation record."));
+            };
+          });
         }
 
         // Bind Map buttons
         function bindMapButtons() {
-          tableBody.querySelectorAll(".map-btn").forEach(
-            (btn) =>
-              (btn.onclick = () => {
-                const origin = btn.dataset.origin;
-                const destination = btn.dataset.destination;
-                mapContainer.style.display = "block";
+          tableBody.querySelectorAll(".map-btn").forEach((btn) => {
+            btn.onclick = () => {
+              const origin = btn.dataset.origin;
+              const destination = btn.dataset.destination;
 
-                if (!mapInitialized) {
-                  map = L.map("transportMap").setView([23.685, 90.3563], 7);
-                  L.tileLayer(
-                    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                    {
-                      attribution:
-                        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-                    }
-                  ).addTo(map);
-                  mapInitialized = true;
-                } else map.invalidateSize();
+              if (mapContainer.style.display === "block") {
+                mapContainer.style.display = "none";
+                return;
+              }
 
-                plotRoute(origin, destination);
-              })
-          );
+              mapContainer.style.display = "block";
+
+              if (!mapInitialized) {
+                map = L.map("transportMap").setView([23.685, 90.3563], 7);
+                L.tileLayer(
+                  "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                  {
+                    attribution:
+                      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                  }
+                ).addTo(map);
+                mapInitialized = true;
+              } else map.invalidateSize();
+
+              plotRoute(origin, destination); // your existing plotRoute function
+            };
+          });
         }
 
-        // Update summary cards
+        // Close map when clicking outside
+        document.addEventListener("click", (e) => {
+          if (
+            mapContainer.style.display === "block" &&
+            !mapContainer.contains(e.target) &&
+            !e.target.classList.contains("map-btn")
+          ) {
+            mapContainer.style.display = "none";
+          }
+        });
+
         function updateSummaryCards() {
           const rows = tableBody.querySelectorAll("tr");
           const today = new Date().toISOString().split("T")[0];
@@ -621,7 +633,6 @@
           summaryScheduledToday.textContent = `${scheduledToday} scheduled for today`;
         }
 
-        // Update fleet status
         function updateFleetStatus() {
           const usedVehicles = Array.from(tableBody.querySelectorAll("tr")).map(
             (row) =>
@@ -633,7 +644,6 @@
           availableVehiclesCount.textContent = available.length;
         }
 
-        // Search
         if (searchInput) {
           searchInput.addEventListener("keyup", () => {
             const filter = searchInput.value.toLowerCase();
@@ -645,11 +655,9 @@
           });
         }
 
-        // Initial load
         loadTransports();
       }
 
-      // Initialize
       document.addEventListener("DOMContentLoaded", initTransportationPage);
 
       // ---------- Product Page Logic ----------
