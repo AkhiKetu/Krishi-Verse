@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
 
-// DB connection
+// Database connection
 $host = 'localhost';
 $user = 'root';
 $password = '';
@@ -62,11 +62,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Add or update inventory
     if (isset($data['action']) && $data['action'] === 'save') {
         $id = isset($data['id']) ? intval($data['id']) : 0;
-        $product_id = $conn->real_escape_string($data['product_id']);
+        $product_id = intval($data['product_id']);
         $warehouse_id = intval($data['warehouse_id']);
         $main_storage = floatval($data['main_storage']);
         $in_warehouse = floatval($data['in_warehouse']);
-        $last_available = floatval($data['last_available']);
+        $last_available = $main_storage - $in_warehouse;
 
         if ($id > 0) {
             // Update
