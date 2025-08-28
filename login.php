@@ -42,7 +42,8 @@ if ($result->num_rows === 1) {
             'supplier' => 'supplierDashboard.html',
             'transporter' => 'transportDashboard.html',
             'distributor' => 'distributorDashboard.html',
-            'retailer' => 'retailerDashboard.html'
+            'retailer' => 'retailerDashboard.html',
+            'admin' => 'admin-dashboard.html'
         ];
 
         echo json_encode([
