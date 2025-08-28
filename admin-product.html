@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Products Admin</title>
+  <link rel="stylesheet" href="dashboard.css"> <!-- Your dashboard CSS -->
+</head>
+<body>
+
+<h2>Products</h2>
+<p>Manage your agricultural product inventory</p>
+
+<!-- Action Bar -->
+<div class="actions-bar">
+  <input id="searchInput" type="text" placeholder="Search products..." />
+  <select id="categoryFilter">
+    <option value="">Filter by category</option>
+    <option value="Vegetables">Vegetables</option>
+    <option value="Seeds">Seeds</option>
+  </select>
+  <button id="addProductBtn">+ Add New Product</button>
+</div>
+
+<!-- Product Table -->
+<div class="table-container">
+  <h3>Product Inventory</h3>
+  <table id="productTable">
+    <thead>
+      <tr>
+        <th>Product ID</th>
+        <th>Name</th>
+        <th>Category</th>
+        <th>Price(Per Kg)</th>
+        <th>Packaging</th>
+        <th>Status</th>
+        <th>Location</th>
+        <th>Planting Date</th>
+        <th>Expected Harvest</th>
+        <th>Optimise Shelf Life</th>
+        <th>Optimise Storage Temp</th>
+        <th>Optimise Humidity</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="productTableBody">
+      <!-- Dynamic product rows will load here -->
+    </tbody>
+  </table>
+</div>
+
+<!-- Add/Edit Product Modal -->
+<div id="addProductModal" class="modal">
+  <div class="modal-content">
+    <span id="closeModal" class="close">&times;</span>
+    <h3>Add/Edit Product</h3>
+    <form id="addProductForm">
+      <input
+        id="productID"
+        name="productID"
+        type="text"
+        placeholder="Product ID"
+        required
+      />
+      <input
+        id="productName"
+        name="productName"
+        type="text"
+        placeholder="Name"
+        required
+      />
+
+      <!-- Category Dropdown -->
+      <select id="category" name="category" required>
+        <option value="" disabled selected>Select Category</option>
+        <option value="Vegetables">Vegetables</option>
+        <option value="Seeds">Seeds</option>
+        <option value="Fruits">Fruits</option>
+      </select>
+
+      <input id="price" name="price" type="text" placeholder="Price" required />
+      <input
+        id="packaging"
+        name="packaging"
+        type="text"
+        placeholder="Packaging (e.g. 5 Kg Crates)"
+        required
+      />
+      <input
+        id="location"
+        name="location"
+        type="text"
+        placeholder="Location"
+        required
+      />
+
+      <select id="status" name="status" required>
+        <option value="" disabled selected>Select Status</option>
+        <option value="in-stock">In Stock</option>
+        <option value="stock-out">Stock Out</option>
+      </select>
+
+      <div class="form-group">
+        <label for="plantingDate">Planting Date</label>
+        <input id="plantingDate" name="plantingDate" type="date" required />
+      </div>
+
+      <div class="form-group">
+        <label for="harvestDate">Expected Harvesting Date</label>
+        <input id="harvestDate" name="harvestDate" type="date" required />
+      </div>
+
+      <input
+        id="shelfLife"
+        name="shelfLife"
+        type="text"
+        placeholder="Optimise Shelf Life (e.g. 10 days)"
+        required
+      />
+      <input
+        id="storageTemp"
+        name="storageTemp"
+        type="text"
+        placeholder="Optimise Storage Temp (e.g. 8°C)"
+        required
+      />
+      <input
+        id="humidity"
+        name="humidity"
+        type="text"
+        placeholder="Optimise Humidity (e.g. 85%)"
+        required
+      />
+
+      <button type="submit">Save Product</button>
+    </form>
+  </div>
+</div>
+
+<!-- JS for connecting HTML to PHP -->
+<script>
+  const apiUrl = 'productadmin.php';
+
+  function fetchProducts() {
+    fetch(`${apiUrl}?action=list`)
+      .then(res => res.json())
+      .then(products => {
+        const tbody = document.getElementById('productTableBody');
+        tbody.innerHTML = '';
+        products.forEach(product => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${product.productID}</td>
+            <td>${product.productName}</td>
+            <td>${product.category}</td>
+            <td>${product.price}</td>
+            <td>${product.packaging}</td>
+            <td><span class="status ${product.status}">${product.status}</span></td>
+            <td>${product.location}</td>
+            <td>${product.plantingDate}</td>
+            <td>${product.harvestDate}</td>
+            <td>${product.shelfLife}</td>
+            <td>${product.storageTemp}</td>
+            <td>${product.humidity}</td>
+            <td class="action-buttons">
+              <button class="edit-btn" onclick="editProduct('${product.productID}')">Edit</button>
+              <button class="delete-btn" onclick="deleteProduct('${product.productID}')">Delete</button>
+            </td>
+          `;
+          tbody.appendChild(row);
+        });
+      });
+  }
+
+  function deleteProduct(id) {
+    if (!confirm('Are you sure you want to delete this product?')) return;
+    fetch(apiUrl + '?action=delete', {
+      method: 'POST',
+      body: JSON.stringify({ productID: id }),
+    })
+      .then(res => res.json())
+      .then(data => {
+        alert(data.message);
+        fetchProducts();
+      });
+  }
+
+  const form = document.getElementById('addProductForm');
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = {
+      productID: form.productID.value,
+      productName: form.productName.value,
+      category: form.category.value,
+      price: form.price.value,
+      packaging: form.packaging.value,
+      location: form.location.value,
+      status: form.status.value,
+      plantingDate: form.plantingDate.value,
+      harvestDate: form.harvestDate.value,
+      shelfLife: form.shelfLife.value,
+      storageTemp: form.storageTemp.value,
+      humidity: form.humidity.value
+    };
+    fetch(apiUrl + '?action=save', {
+      method: 'POST',
+      body: JSON.stringify(formData)
+    })
+      .then(res => res.json())
+      .then(data => {
+        alert(data.message);
+        fetchProducts();
+        document.getElementById('addProductModal').style.display = 'none';
+      });
+  });
+
+  document.getElementById('addProductBtn').onclick = () => {
+    document.getElementById('addProductModal').style.display = 'block';
+  };
+  document.getElementById('closeModal').onclick = () => {
+    document.getElementById('addProductModal').style.display = 'none';
+  };
+
+  fetchProducts(); // Initial load
+</script>
+
+</body>
+</html>
