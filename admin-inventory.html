@@ -21,8 +21,7 @@
 
     <!-- Inventory Table -->
     <div class="table-container">
-      <h3>Inventory Records</h3>
-      <table id="inventoryTable">
+      <table id="inventoryTable" class="inventory-table">
         <thead>
           <tr>
             <th>Batch ID</th>
@@ -71,12 +70,12 @@
 </div>
 
 <script>
+// ================= Inventory JS =================
 const modal = document.getElementById('inventoryModal');
 const addBtn = document.getElementById('addInventoryBtn');
 const closeBtn = document.getElementById('closeInventoryModal');
 const cancelBtn = modal.querySelector('.cancel-btn');
 const form = document.getElementById('inventoryForm');
-
 let inventoryData = [];
 
 // Open modal
@@ -137,9 +136,9 @@ function loadInventory() {
               <td>${item.in_warehouse}</td>
               <td>${item.last_available}</td>
               <td>
-                <div class="action-buttons">
-                  <button class="edit-btn" onclick="editInventory(${item.id})">Edit</button>
-                  <button class="delete-btn" onclick="deleteInventory(${item.id})">Delete</button>
+                <div class="inventory-actions">
+                  <button onclick="editInventory(${item.id})">Edit</button>
+                  <button onclick="deleteInventory(${item.id})">Delete</button>
                 </div>
               </td>
             </tr>`;

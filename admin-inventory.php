@@ -14,29 +14,22 @@ if ($conn->connect_error) {
 
 // Handle GET requests
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    // Fetch products for dropdown
     if (isset($_GET['products'])) {
         $result = $conn->query("SELECT productID, productName FROM products");
         $products = [];
-        while ($row = $result->fetch_assoc()) {
-            $products[] = $row;
-        }
+        while ($row = $result->fetch_assoc()) $products[] = $row;
         echo json_encode(['success' => true, 'products' => $products]);
         exit;
     }
 
-    // Fetch warehouses for dropdown
     if (isset($_GET['warehouses'])) {
         $result = $conn->query("SELECT id, name FROM warehouses");
         $warehouses = [];
-        while ($row = $result->fetch_assoc()) {
-            $warehouses[] = $row;
-        }
+        while ($row = $result->fetch_assoc()) $warehouses[] = $row;
         echo json_encode(['success' => true, 'warehouses' => $warehouses]);
         exit;
     }
 
-    // Fetch inventory list
     $sql = "SELECT i.id, i.product_id, p.productName, i.main_storage, i.warehouse_id, w.name AS warehouseName, i.in_warehouse, i.last_available
             FROM inventory i
             JOIN products p ON i.product_id = p.productID
@@ -44,9 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             ORDER BY i.id DESC";
     $result = $conn->query($sql);
     $inventory = [];
-    while ($row = $result->fetch_assoc()) {
-        $inventory[] = $row;
-    }
+    while ($row = $result->fetch_assoc()) $inventory[] = $row;
     echo json_encode(['success' => true, 'inventory' => $inventory]);
     exit;
 }
@@ -59,7 +50,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Add or update inventory
     if (isset($data['action']) && $data['action'] === 'save') {
         $id = isset($data['id']) ? intval($data['id']) : 0;
         $product_id = intval($data['product_id']);
@@ -69,7 +59,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $last_available = $main_storage - $in_warehouse;
 
         if ($id > 0) {
-            // Update
             $sql = "UPDATE inventory SET 
                         product_id='$product_id', 
                         warehouse_id=$warehouse_id, 
@@ -79,29 +68,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     WHERE id=$id";
             $msg = "Inventory updated successfully";
         } else {
-            // Insert
             $sql = "INSERT INTO inventory (product_id, warehouse_id, main_storage, in_warehouse, last_available)
                     VALUES ('$product_id', $warehouse_id, $main_storage, $in_warehouse, $last_available)";
             $msg = "Inventory added successfully";
         }
 
-        if ($conn->query($sql)) {
-            echo json_encode(['success' => true, 'message' => $msg]);
-        } else {
-            echo json_encode(['success' => false, 'message' => $conn->error]);
-        }
+        if ($conn->query($sql)) echo json_encode(['success' => true, 'message' => $msg]);
+        else echo json_encode(['success' => false, 'message' => $conn->error]);
         exit;
     }
 
-    // Delete inventory
     if (isset($data['action']) && $data['action'] === 'delete') {
         $id = intval($data['id']);
         $sql = "DELETE FROM inventory WHERE id=$id";
-        if ($conn->query($sql)) {
-            echo json_encode(['success' => true, 'message' => 'Inventory deleted successfully']);
-        } else {
-            echo json_encode(['success' => false, 'message' => $conn->error]);
-        }
+        if ($conn->query($sql)) echo json_encode(['success' => true, 'message' => 'Inventory deleted successfully']);
+        else echo json_encode(['success' => false, 'message' => $conn->error]);
         exit;
     }
 }
