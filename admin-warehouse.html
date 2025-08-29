@@ -1,0 +1,84 @@
+<div class="warehouse-section">
+  <div class="warehouse-header">
+    <div class="warehouse-header-top">
+      <h2>Warehouse Management</h2>
+      <button id="addWarehouseBtn">+ Add Warehouse</button>
+    </div>
+    <p>Monitor and manage your storage facilities</p>
+  </div>
+
+  <div class="summary-cards">
+    <div class="card">
+      <p>Total Warehouses</p>
+      <h3 id="totalWarehouses">0</h3>
+    </div>
+    <div class="card">
+      <p>Total Capacity</p>
+      <h3 id="totalCapacity">0 kg</h3>
+    </div>
+    <div class="card">
+      <p>Occupied Space</p>
+      <h3 id="occupiedSpace">0 kg</h3>
+    </div>
+  </div>
+
+  <div class="inventory-controls">
+    <input type="text" id="searchWarehouse" placeholder="Search warehouse..." />
+  </div>
+
+  <div class="inventory-table">
+    <h3>Current Inventory</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Location</th>
+          <th>Capacity</th>
+          <th>Manager</th>
+          <th>Type</th>
+        </tr>
+      </thead>
+      <tbody id="warehouseTableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Add Warehouse Modal -->
+<div id="addWarehouseModal" class="modal" style="display: none">
+  <div class="modal-content">
+    <span id="closeWarehouseModal" class="close">&times;</span>
+    <h3>Add New Warehouse</h3>
+    <form id="warehouseForm">
+      <input
+        type="text"
+        name="name"
+        placeholder="Enter warehouse name"
+        required
+      />
+      <input
+        type="text"
+        name="location"
+        placeholder="Enter location"
+        required
+      />
+      <input
+        type="number"
+        name="capacity"
+        placeholder="Enter capacity (kg)"
+        required
+      />
+      <input
+        type="text"
+        name="manager"
+        placeholder="Enter manager name"
+        required
+      />
+      <select name="type" required>
+        <option value="">Select type</option>
+        <option value="Cold Storage">Cold Storage</option>
+        <option value="Dry Storage">Dry Storage</option>
+      </select>
+      <button type="submit">Add Warehouse</button>
+    </form>
+  </div>
+</div>
