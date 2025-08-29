@@ -1461,4 +1461,124 @@ button {
   color: #666;
 }
 
+/* Color-coded left border for card types */
+.card.warning {
+  border-left: 5px solid #fbbc05;
+}
 
+.card.success {
+  border-left: 5px solid #34a853;
+}
+
+.card.alert {
+  border-left: 5px solid #ea4335;
+}
+
+/* Filters */
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.filters input[type="text"],
+.filters select {
+  padding: 0.6rem 0.8rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 0.95rem;
+  min-width: 200px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 600px) {
+  .stats-cards {
+    flex-direction: column;
+  }
+
+  .filters {
+    flex-direction: column;
+  }
+}
+/* Button for Mark Reviewed */
+.review-btn {
+  cursor: pointer;
+  border: none;
+  padding: 6px 10px;
+  margin-right: 5px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  background-color: #34a853;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+.review-btn:hover {
+  background-color: #2c8b42;
+}
+
+/* Badges for Reviewed and Compliant status */
+.badge.reviewed {
+  background-color: #1a73e8;
+  color: white;
+}
+
+.badge.compliant {
+  background-color: #34a853;
+  color: white;
+}
+
+/*home consumer.css */
+/* Consumer Cards Section */
+.consumer-cards {
+  display: flex;
+  gap: 1rem;
+  margin: 1.5rem 0;
+  flex-wrap: wrap;
+}
+
+.consumer-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.2rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  flex: 1 1 200px;
+  min-width: 200px;
+  transition: transform 0.2s ease;
+}
+
+.consumer-card:hover {
+  transform: translateY(-3px);
+}
+
+.consumer-card p {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 0.4rem;
+}
+
+.consumer-card h2 {
+  font-size: 1.8rem;
+  color: #222;
+}
+
+/* Card Colors */
+.consumer-card.green {
+  border-left: 5px solid #34a853;
+}
+
+.consumer-card.blue {
+  border-left: 5px solid #1a73e8;
+}
+
+.consumer-card.purple {
+  border-left: 5px solid #9b51e0;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .consumer-cards {
+    flex-direction: column;
+  }
+}
