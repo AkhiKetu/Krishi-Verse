@@ -52,10 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 
-
-
-
-
+/*  add a new consumer (original)
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -97,10 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-
-
-
-
+*/
 
 
 
