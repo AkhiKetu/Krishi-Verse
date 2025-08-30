@@ -1,7 +1,8 @@
 <?php
 header('Content-Type: application/json');
 
-// DB config
+// DB config file
+// individual config
 $host = 'localhost';
 $user = 'root';
 $password = '';
@@ -15,6 +16,8 @@ if ($conn->connect_error) {
 }
 
 // Helper: fetch all documents and stats
+//helper module 
+
 function getDocumentsAndStats($conn) {
     $docs = [];
     $result = $conn->query("SELECT * FROM documents ORDER BY created_at DESC");
@@ -33,7 +36,7 @@ function getDocumentsAndStats($conn) {
             'fileSize' => $row['file_size'],
         ];
     }
-    // Stats
+    // Stats stat per compliant
     $total = (int)$conn->query("SELECT COUNT(*) FROM documents")->fetch_row()[0];
     $pending = (int)$conn->query("SELECT COUNT(*) FROM documents WHERE status='Pending Review'")->fetch_row()[0];
     $compliantCount = (int)$conn->query("SELECT COUNT(*) FROM documents WHERE compliance='Yes'")->fetch_row()[0];
