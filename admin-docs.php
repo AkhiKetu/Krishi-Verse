@@ -130,3 +130,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 echo json_encode(getDocumentsAndStats($conn));
 $conn->close();
 exit;
+
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'markReviewed') {
+    if (!isset($_POST['id']) || !is_numeric($_POST['id'])) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => 'Invalid document ID']);
+        exit;
+    }
+    $docId = (int)$_POST['id'];
+
+    $stmt = $conn->prepare("UPDATE documents SET status = 'Reviewed', compliance = 'Yes' WHERE id = ?");
+    $stmt->bind_param("i", $docId);
+
+    if (!$stmt->execute()) {
+        http_response_code(500);
+        echo json_encode(['success' => false, 'message' => 'Failed to update document']);
+        exit;
+    }
