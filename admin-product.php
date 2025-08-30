@@ -1,7 +1,8 @@
 <?php
 header('Content-Type: application/json');
 
-// DB connection info here
+// DB connection info here 
+//DATABASE 
 $host = 'localhost';
 $user = 'root';
 $password = '';
@@ -42,12 +43,14 @@ try {
             }
 
             // Check if product exists
+            //CHECKS HERE
             $stmt = $pdo->prepare("SELECT COUNT(*) FROM products WHERE productID = ?");
             $stmt->execute([$data['productID']]);
             $exists = $stmt->fetchColumn() > 0;
 
             if ($exists) {
                 // Update existing
+                //UPDATE HERE
                 $sql = "UPDATE products SET
                     productName = :productName,
                     category = :category,
@@ -80,6 +83,7 @@ try {
                 echo json_encode(['success' => true, 'message' => 'Product updated successfully']);
             } else {
                 // Insert new
+                //Add NEW
                 $sql = "INSERT INTO products (
                     productID, productName, category, price, packaging,
                     location, status, plantingDate, harvestDate,
@@ -107,7 +111,8 @@ try {
                 echo json_encode(['success' => true, 'message' => 'Product added successfully']);
             }
             break;
-
+               //deletation
+               //DELETE STARTS
         case 'delete':
             $data = json_decode(file_get_contents('php://input'), true);
             $id = $data['productID'] ?? '';
