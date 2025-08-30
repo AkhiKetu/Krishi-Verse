@@ -8,6 +8,8 @@
 </head>
 <body>
 
+<!--Admin-level inventory management across all warehouses-->
+
 <div class="main">
   <div class="content">
     <h2>Inventory Management</h2>
@@ -19,7 +21,7 @@
       <button id="addInventoryBtn">+ New Inventory</button>
     </div>
 
-    <!-- Inventory Table -->
+    <!-- Inventory Table(data) -->
     <div class="table-container">
       <table id="inventoryTable" class="inventory-table">
         <thead>
@@ -39,7 +41,7 @@
   </div>
 </div>
 
-<!-- Add/Edit Inventory Modal -->
+<!-- Add or Edit Inventory Modal -->
 <div id="inventoryModal" class="modal">
   <div class="modal-content">
     <span id="closeInventoryModal" class="close">&times;</span>
@@ -70,7 +72,7 @@
 </div>
 
 <script>
-// ================= Inventory JS =================
+// ================ Inventory JS ================
 const modal = document.getElementById('inventoryModal');
 const addBtn = document.getElementById('addInventoryBtn');
 const closeBtn = document.getElementById('closeInventoryModal');
@@ -90,7 +92,7 @@ addBtn.onclick = () => {
 closeBtn.onclick = cancelBtn.onclick = () => modal.style.display = 'none';
 window.onclick = e => { if (e.target == modal) modal.style.display = 'none'; };
 
-// Fetch products and warehouses for dropdowns
+// Fetch the products and warehouses for dropdowns
 function fetchDropdowns() {
   fetch('warehouse_inventory.php?products=1')
     .then(res => res.json())
