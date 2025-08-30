@@ -2,7 +2,9 @@
 header('Content-Type: application/json');
 
 // DB config file
+// Database implementation
 // individual config
+// For configaration 
 $host = 'localhost';
 $user = 'root';
 $password = '';
@@ -17,6 +19,7 @@ if ($conn->connect_error) {
 
 // Helper: fetch all documents and stats
 //helper module 
+// MODULE
 
 function getDocumentsAndStats($conn) {
     $docs = [];
@@ -37,6 +40,7 @@ function getDocumentsAndStats($conn) {
         ];
     }
     // Stats stat per compliant
+    // Compliant statement
     $total = (int)$conn->query("SELECT COUNT(*) FROM documents")->fetch_row()[0];
     $pending = (int)$conn->query("SELECT COUNT(*) FROM documents WHERE status='Pending Review'")->fetch_row()[0];
     $compliantCount = (int)$conn->query("SELECT COUNT(*) FROM documents WHERE compliance='Yes'")->fetch_row()[0];
@@ -57,6 +61,7 @@ function getDocumentsAndStats($conn) {
 }
 
 // Handle "Mark Reviewed" update
+// Mark Reviewed
 // new update here
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'markReviewed') {
     if (!isset($_POST['id']) || !is_numeric($_POST['id'])) {
@@ -78,6 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $stmt->close();
 
     // Return updated stats only
+    // UPDATE MODAL
     $stats = getDocumentsAndStats($conn)['stats'];
 
     echo json_encode(['success' => true, 'stats' => $stats]);
@@ -90,6 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // For new additions
 
     // Validate required POST fields
+    // Validation requirements
     $required = ['docType', 'docNumber', 'shipmentId', 'productName', 'distribution', 'issueDate', 'expiryDate', 'fileSize'];
     foreach ($required as $field) {
         if (empty($_POST[$field])) {
@@ -134,5 +141,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 echo json_encode(getDocumentsAndStats($conn));
 $conn->close();
 exit;
-
+// For GET, just return documents + stats
+// For GET, just return documents + stats
 
