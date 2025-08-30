@@ -50,6 +50,60 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
+
+
+
+
+
+
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    // Trying to add a new consumer
+
+    // Get data from the form
+    $name = isset($_POST['name']) ? trim($_POST['name']) : '';
+    $type = isset($_POST['type']) ? trim($_POST['type']) : '';
+    $email = isset($_POST['email']) ? trim($_POST['email']) : '';
+    $phone = isset($_POST['phone']) ? trim($_POST['phone']) : '';
+    $location = isset($_POST['location']) ? trim($_POST['location']) : '';
+    $status = isset($_POST['status']) ? trim($_POST['status']) : '';
+
+    // Simple validation
+    if (!$name || !$type || !in_array($type, ['farmer', 'supplier', 'customer']) || !in_array($status, ['active', 'inactive'])) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => 'Invalid input data']);
+        exit;
+    }
+
+    // Prepare SQL to insert new consumer
+    $stmt = $conn->prepare("INSERT INTO consumers (name, type, email, phone, location, status) VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("ssssss", $name, $type, $email, $phone, $location, $status);
+
+    // Execute SQL
+    if (!$stmt->execute()) {
+        http_response_code(500);
+        echo json_encode(['success' => false, 'message' => 'Failed to add consumer']);
+        exit;
+    }
+
+    $stmt->close();
+
+    // Send back updated list
+    echo json_encode(getConsumersAndCounts($conn));
+
+    // Close connection
+    $conn->close();
+    exit;
+}
+
+
+
+
+
+
+
+
 // For GET requests, return all consumers + counts
 echo json_encode(getConsumersAndCounts($conn));
 $conn->close();
