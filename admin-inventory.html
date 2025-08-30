@@ -222,6 +222,8 @@ form.onsubmit = e => {
   .then(data => { alert(data.message); modal.style.display='none'; loadInventory(); });
 };
 
+/* 
+// unpack (1st)
 document.getElementById("mainStorage").addEventListener("input", function () {
      const main = parseFloat(document.getElementById("mainStorage").value) || 0;
      const packed = parseFloat(document.getElementById("inWarehouse").value) || 0;
@@ -234,6 +236,8 @@ document.getElementById("mainStorage").addEventListener("input", function () {
      document.getElementById("lastAvailable").value = (main - packed).toFixed(2);
  });
 
+*/
+
 
 // Update unpacked field dynamically
 document.getElementById('mainStorage').oninput = document.getElementById('inWarehouse').oninput = () => {
@@ -241,6 +245,7 @@ document.getElementById('mainStorage').oninput = document.getElementById('inWare
   const packed = parseFloat(document.getElementById('inWarehouse').value) || 0;
   document.getElementById('lastAvailable').value = (main - packed).toFixed(2);
 };
+
 
 // Initial load
 loadInventory();
