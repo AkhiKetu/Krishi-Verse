@@ -208,7 +208,10 @@
             if (page === "admin-product") initProductPage();
             if (page === "admin-warehouse") initWarehousePage();
             if (page === "admin-consumers") initConsumerPage();
-            if (page === "admin-home") initHomePage();
+            if (page === "admin-home"){
+              renderTransportationChart();
+             }
+          
             if (page === "admin-transportation") initTransportationPage();
             if (page === "admin-docs") initDocumentPage();
             if (page === "admin-inventory") initInventoryPage();
@@ -247,8 +250,40 @@
       function initDocumentPage() {}
       function initInventoryPage() {}
 
+      //--transport Dummy Graph-----------
+      function renderTransportationChart() {
+        const ctx = document.getElementById("transportChart").getContext("2d");
+
+        new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+            datasets: [
+              {
+                label: "Transportation Cost ($)",
+                data: [1200, 1350, 1100, 1450, 1600, 1550, 1700],
+                borderColor: "rgba(75, 192, 192, 1)",
+                backgroundColor: "rgba(75, 192, 192, 0.2)",
+                fill: true,
+                tension: 0.3,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { position: "top" },
+              title: { display: true, text: "Monthly Transportation Cost" },
+            },
+            scales: { y: { beginAtZero: false } },
+          },
+        });
+      }
+
       // Load home by default
+    
       loadContent("admin-home");
+      
     </script>
   </body>
 </html>
