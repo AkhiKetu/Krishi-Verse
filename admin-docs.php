@@ -57,6 +57,7 @@ function getDocumentsAndStats($conn) {
 }
 
 // Handle "Mark Reviewed" update
+// new update here
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'markReviewed') {
     if (!isset($_POST['id']) || !is_numeric($_POST['id'])) {
         http_response_code(400);
@@ -86,6 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Add new document
+    // For new additions
 
     // Validate required POST fields
     $required = ['docType', 'docNumber', 'shipmentId', 'productName', 'distribution', 'issueDate', 'expiryDate', 'fileSize'];
@@ -107,6 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $fileSize = $conn->real_escape_string($_POST['fileSize']);
 
     // Set default status and compliance for new docs
+    // For compliance
     $status = 'Pending Review';
     $compliance = 'No';
 
@@ -127,6 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // For GET, just return documents + stats
+//  return documents + stats
 echo json_encode(getDocumentsAndStats($conn));
 $conn->close();
 exit;
