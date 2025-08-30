@@ -222,6 +222,19 @@ form.onsubmit = e => {
   .then(data => { alert(data.message); modal.style.display='none'; loadInventory(); });
 };
 
+document.getElementById("mainStorage").addEventListener("input", function () {
+     const main = parseFloat(document.getElementById("mainStorage").value) || 0;
+     const packed = parseFloat(document.getElementById("inWarehouse").value) || 0;
+     document.getElementById("lastAvailable").value = (main - packed).toFixed(2);
+ });
+
+ document.getElementById("inWarehouse").addEventListener("input", function () {
+     const main = parseFloat(document.getElementById("mainStorage").value) || 0;
+     const packed = parseFloat(document.getElementById("inWarehouse").value) || 0;
+     document.getElementById("lastAvailable").value = (main - packed).toFixed(2);
+ });
+
+
 // Update unpacked field dynamically
 document.getElementById('mainStorage').oninput = document.getElementById('inWarehouse').oninput = () => {
   const main = parseFloat(document.getElementById('mainStorage').value) || 0;
