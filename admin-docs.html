@@ -104,3 +104,151 @@
     </form>
   </div>
 </div>
+
+
+<!-- START OF UPLOAD MODAL -->
+<div id="uploadModal" class="modal" style="display: none; visibility: hidden; opacity: 1;">
+    <!-- MAIN CONTAINER FOR MODAL CONTENT -->
+    <div class="modal-content" style="border: 2px solid #ccc; padding: 15px; background-color: #fff; margin: 10px auto; width: 600px; border-radius: 8px;">
+        
+        <!-- CLOSE BUTTON -->
+        <span class="close-btn" id="closeUploadModal" style="font-size: 30px; cursor: pointer; float: right;">&times;</span>
+        
+        <!-- TITLE -->
+        <h3 style="text-align: center; font-size: 22px; font-weight: bold;">Upload Document Form</h3>
+        
+        <!-- FORM START -->
+        <form id="uploadForm" enctype="multipart/form-data" method="POST" action="#" style="margin-top: 20px; padding: 10px;">
+
+            <!-- DOCUMENT TYPE INPUT -->
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label for="docType" style="font-weight: bold; display: block;">Document Type:</label>
+                <input 
+                    type="text" 
+                    id="docType" 
+                    name="docType" 
+                    required="required" 
+                    placeholder="Enter Document Type" 
+                    class="form-input"
+                    style="width: 98%; padding: 8px; margin-top: 5px;"
+                />
+            </div>
+
+            <!-- DOCUMENT NUMBER INPUT -->
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label for="docNumber" style="font-weight: bold; display: block;">Document Number:</label>
+                <input 
+                    type="text" 
+                    id="docNumber" 
+                    name="docNumber" 
+                    required="required" 
+                    placeholder="Enter Document Number"
+                    class="form-input"
+                    style="width: 98%; padding: 8px; margin-top: 5px;"
+                />
+            </div>
+
+            <!-- SHIPMENT ID INPUT -->
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label for="shipmentId" style="font-weight: bold; display: block;">Shipment ID:</label>
+                <input 
+                    type="text" 
+                    id="shipmentId" 
+                    name="shipmentId" 
+                    required="required" 
+                    placeholder="Enter Shipment ID"
+                    class="form-input"
+                    style="width: 98%; padding: 8px; margin-top: 5px;"
+                />
+            </div>
+
+            <!-- PRODUCT NAME INPUT -->
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label for="productName" style="font-weight: bold; display: block;">Product Name:</label>
+                <input 
+                    type="text" 
+                    id="productName" 
+                    name="productName" 
+                    required="required" 
+                    placeholder="Enter Product Name"
+                    class="form-input"
+                    style="width: 98%; padding: 8px; margin-top: 5px;"
+                />
+            </div>
+
+            <!-- DISTRIBUTION CENTER INPUT -->
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label for="distribution" style="font-weight: bold; display: block;">Distribution Center:</label>
+                <input 
+                    type="text" 
+                    id="distribution" 
+                    name="distribution" 
+                    required="required" 
+                    placeholder="Enter Distribution Center"
+                    class="form-input"
+                    style="width: 98%; padding: 8px; margin-top: 5px;"
+                />
+            </div>
+
+            <!-- ISSUE DATE INPUT -->
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label for="issueDate" style="font-weight: bold; display: block;">Issue Date:</label>
+                <input 
+                    type="date" 
+                    id="issueDate" 
+                    name="issueDate" 
+                    required="required"
+                    class="form-input"
+                    style="width: 98%; padding: 8px; margin-top: 5px;"
+                />
+            </div>
+
+            <!-- EXPIRY DATE INPUT -->
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label for="expiryDate" style="font-weight: bold; display: block;">Expiry Date:</label>
+                <input 
+                    type="date" 
+                    id="expiryDate" 
+                    name="expiryDate" 
+                    required="required"
+                    class="form-input"
+                    style="width: 98%; padding: 8px; margin-top: 5px;"
+                />
+            </div>
+
+            <!-- UPLOAD PDF INPUT -->
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label for="pdfFile" style="font-weight: bold; display: block;">Upload PDF Document:</label>
+                <input 
+                    type="file" 
+                    id="pdfFile" 
+                    name="pdfFile" 
+                    accept="application/pdf"
+                    required="required"
+                    class="form-input"
+                    style="margin-top: 5px;"
+                />
+                <small style="display: block; margin-top: 5px; color: #555;">*Only PDF files allowed</small>
+            </div>
+
+            <!-- SAVE BUTTON -->
+            <div class="form-actions" style="text-align: center;">
+                <button 
+                    type="submit" 
+                    class="save-btn" 
+                    id="saveDocumentBtn"
+                    style="padding: 10px 25px; background-color: #28a745; border: none; color: white; border-radius: 5px; cursor: pointer;"
+                >
+                    Save Document
+                </button>
+            </div>
+
+        </form>
+        <!-- FORM END -->
+    </div>
+    <!-- END MODAL CONTENT -->
+</div>
+<!-- END OF UPLOAD MODAL -->
+-->
+
+
